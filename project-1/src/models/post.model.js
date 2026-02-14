@@ -6,19 +6,29 @@ const postSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    imgUrl: {
+    mediaUrl: {
         type: String,
-        required: [true, "imgUrl is required for creating an post"]
+        required: [true, "mediaUrl is required for creating an post"]
+    },
+     mediaType:{
+        type: String,
+        enum: ["image","video"],
+        required: true
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        ref: "User",
         required: [true, "user id is required for creating an post"]
-    }
-})
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+         ref: "User",
+    }]
+}, { timestamps: true })
 
 
 const postModel = mongoose.model("posts", postSchema)
 
 
 module.exports = postModel
+
