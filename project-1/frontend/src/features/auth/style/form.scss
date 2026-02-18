@@ -1,0 +1,91 @@
+.auth {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-card {
+  width: 350px;
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.logo {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  background: #fafafa;
+  font-size: 14px;
+  border-radius: 3px;
+
+  &:focus {
+    outline: none;
+    border-color: #a8a8a8;
+  }
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #0095f6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #007ed6;
+  }
+}
+
+.divider {
+  margin: 20px 0;
+  position: relative;
+  font-size: 12px;
+  color: #8e8e8e;
+
+  span {
+    background: #fff;
+    padding: 0 10px;
+  }
+
+  &::before {
+    content: "";
+    height: 1px;
+    width: 100%;
+    background: #dbdbdb;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: -1;
+  }
+}
+
+.switch {
+  font-size: 14px;
+  margin-top: 20px;
+
+  a {
+    color: #0095f6;
+    text-decoration: none;
+    font-weight: 600;
+  }
+}

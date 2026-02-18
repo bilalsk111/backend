@@ -1,128 +1,142 @@
-const followModel = require("../models/follow.model")
-const userModel = require("../models/user.model")
+const Follow = require("../models/follow.model");
+const User = require("../models/user.model");
 
+/* ======================================================
+   SEND FOLLOW REQUEST
+   POST /api/users/follow/:username
+====================================================== */
+async function followUser(req, res) {
+    try {
+        const followerId = req.user.id;
+        const { username } = req.params;
 
-// SEND FOLLOW REQUEST
-async function followUserController(req, res) {
+        const targetUser = await User.findOne({ username });
+        if (!targetUser)
+            return res.status(404).json({ message: "User not found" });
 
-    const followerUsername = req.user.username
-    const followeeUsername = req.params.username
+        if (targetUser._id.toString() === followerId)
+            return res.status(400).json({ message: "You cannot follow yourself" });
 
-    if (followerUsername === followeeUsername) {
-        return res.status(400).json({
-            message: "You cannot follow yourself"
-        })
-    }
+        const existing = await Follow.findOne({
+            follower: followerId,
+            followee: targetUser._id
+        });
 
-    const followeeUser = await userModel.findOne({ username: followeeUsername })
+        if (existing)
+            return res.status(409).json({
+                message: `Request already exists (${existing.status})`
+            });
 
-    if (!followeeUser) {
-        return res.status(404).json({
-            message: "User not found"
-        })
-    }
-
-    const existingRequest = await followModel.findOne({
-        follower: followerUsername,
-        followee: followeeUsername
-    })
-
-    if (existingRequest) {
-        return res.status(200).json({
-            message: "Follow request already sent",
-            follow: existingRequest
-        })
-    }
-
-    const followRecord = await followModel.create({
-        follower: followerUsername,
-        followee: followeeUsername,
-        status: "pending"
-    })
-
-    res.status(201).json({
-        message: "Follow request sent",
-        follow: followRecord
-    })
-}
-
-
-
-// ACCEPT FOLLOW REQUEST
-async function acceptFollowController(req, res) {
-
-    const receiverUsername = req.user.username
-    const senderUsername = req.params.username
-
-    const updatedFollow = await followModel.findOneAndUpdate(
-        {
-            follower: senderUsername,
-            followee: receiverUsername,
+        await Follow.create({
+            follower: followerId,
+            followee: targetUser._id,
             status: "pending"
-        },
-        { status: "accepted" },
-        { new: true }
-    )
+        });
 
-    if (!updatedFollow) {
-        return res.status(404).json({
-            message: "Follow request not found"
-        })
+        return res.status(201).json({ message: "Follow request sent" });
+
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
-
-    res.status(200).json({
-        message: "Follow request accepted",
-        follow: updatedFollow
-    })
 }
 
-// REJECT FOLLOW REQUEST
-async function rejectFollowController(req, res) {
 
-    const receiverUsername = req.user.username
-    const senderUsername = req.params.username
+/* ======================================================
+   ACCEPT FOLLOW REQUEST
+   POST /api/users/accept/:username
+====================================================== */
+async function acceptFollow(req, res) {
+    try {
+        const receiverId = req.user.id;
+        const { username } = req.params;
 
-    const deleted = await followModel.findOneAndDelete({
-        follower: senderUsername,
-        followee: receiverUsername
-    })
+        const sender = await User.findOne({ username });
+        if (!sender)
+            return res.status(404).json({ message: "User not found" });
 
-    if (!deleted) {
-        return res.status(404).json({
-            message: "Follow request not found"
-        })
+        const updated = await Follow.findOneAndUpdate(
+            {
+                follower: sender._id,
+                followee: receiverId,
+                status: "pending"
+            },
+            { status: "accepted" },
+            { returnDocument: "after" }
+        );
+
+        if (!updated)
+            return res.status(404).json({ message: "Pending request not found" });
+
+        return res.status(200).json({ message: "Follow accepted" });
+
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
-
-    res.status(200).json({
-        message: "Follow request rejected"
-    })
 }
-// UNFOLLOW USER
-async function unfollowUserController(req, res) {
 
-    const followerUsername = req.user.username
-    const followeeUsername = req.params.username
 
-    const existingFollow = await followModel.findOne({
-        follower: followerUsername,
-        followee: followeeUsername
-    })
+/* ======================================================
+   REJECT FOLLOW REQUEST
+   POST /api/users/reject/:username
+====================================================== */
+async function rejectFollow(req, res) {
+    try {
+        const receiverId = req.user.id;
+        const { username } = req.params;
 
-    if (!existingFollow) {
-        return res.status(200).json({
-            message: `You are not following ${followeeUsername}`
-        })
+        const sender = await User.findOne({ username });
+        if (!sender)
+            return res.status(404).json({ message: "User not found" });
+
+        const deleted = await Follow.findOneAndDelete({
+            follower: sender._id,
+            followee: receiverId,
+            status: "pending"
+        });
+
+        if (!deleted)
+            return res.status(404).json({ message: "Pending request not found" });
+
+        return res.status(200).json({ message: "Follow rejected" });
+
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
-
-    await followModel.findByIdAndDelete(existingFollow._id)
-
-    res.status(200).json({
-        message: `You have unfollowed ${followeeUsername}`
-    })
 }
+
+
+/* ======================================================
+   UNFOLLOW USER
+   POST /api/users/unfollow/:username
+====================================================== */
+async function unfollowUser(req, res) {
+    try {
+        const followerId = req.user.id;
+        const { username } = req.params;
+
+        const targetUser = await User.findOne({ username });
+        if (!targetUser)
+            return res.status(404).json({ message: "User not found" });
+
+        const deleted = await Follow.findOneAndDelete({
+            follower: followerId,
+            followee: targetUser._id,
+            status: "accepted"
+        });
+
+        if (!deleted)
+            return res.status(404).json({ message: "Not following this user" });
+
+        return res.status(200).json({ message: "Unfollowed successfully" });
+
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 module.exports = {
-    followUserController,
-    acceptFollowController,
-    rejectFollowController,
-    unfollowUserController
-}
+    followUser,
+    acceptFollow,
+    rejectFollow,
+    unfollowUser
+};

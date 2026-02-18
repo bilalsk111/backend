@@ -4,25 +4,22 @@ let followSchema = new mongoose.Schema({
     follower:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'User',
-        required:[true,'follower is required'],
+        required: [true,'follower is required ']
     },
     followee:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'User',
-        required:[true,'following is required'],
+        required: [true,'followee is required ']
     },
     status:{
         type:String,
-        enum:['pending','accepted','rejected'],
-        default:'pending',
+        enum: ['pending','accpted','rejected'],
+        default:'pending'
     }
-},{timestamps: true})
+},{timestamps:true})
 
-followSchema.index(
-    { follower: 1, followee: 1 },
-    { unique: true }
-);
+followSchema.index({follower:1,followee:1},{unique:true})
 
-let followModel = mongoose.model('follow',followSchema)
+let follow = mongoose.model('follow',followSchema)
 
-module.exports = followModel
+module.exports = follow

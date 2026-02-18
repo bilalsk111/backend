@@ -1,6 +1,11 @@
 let express = require('express')
 let cookieParser = require('cookie-parser')
+let cors = require('cors')
 let app = express()
+app.use(cors({
+    credentials:true,
+    origin:'http://localhost:5173'
+}))
 
 
 app.use(express.json())
