@@ -1,7 +1,6 @@
 let postModel = require('../models/post.model')
 let ImageKit = require('@imagekit/nodejs/index.js')
 let { toFile } = require('@imagekit/nodejs/index.js')
-const { post } = require('../app')
 
 const imagekit = new ImageKit({
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY
@@ -55,37 +54,6 @@ async function GetFeed(req, res) {
 }
 
 
-// TOGGLE LIKE
-async function toggleLike(req, res) {
-        const userId = req.user.id;
-        const postId = req.params.id;
-
-        const post = await postModel.findById(postId);
-
-        if (!post) {
-            return res.status(404).json({
-                message: "Post not found"
-            });
-        }
-
-        const alreadyLiked = post.likes.includes(userId);
-
-        if (alreadyLiked) {
-            post.likes.pull(userId);
-        } else {
-            post.likes.push(userId);
-        }
-
-        await post.save();
-
-        return res.status(200).json({
-            message: alreadyLiked ? "Unliked" : "Liked",
-            likesCount: post.likes.length
-        });
-
-}
-
-
 // GET SINGLE POST (public)
 async function detailsPosts(req, res) {
     let postId = req.params.id
@@ -103,6 +71,5 @@ async function detailsPosts(req, res) {
 module.exports = {
     createPost,
     GetFeed,
-   toggleLike,
     detailsPosts
 }

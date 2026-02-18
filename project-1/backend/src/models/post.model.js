@@ -19,11 +19,7 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "user id is required for creating an post"]
-    },
-    likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-         ref: "User",
-    }]
+    }
 }, { timestamps: true })
 
 
