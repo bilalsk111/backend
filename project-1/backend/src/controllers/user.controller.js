@@ -1,5 +1,13 @@
+let ImageKit = require('@imagekit/nodejs/index.js')
+let { toFile } = require('@imagekit/nodejs/index.js')
 const Follow = require("../models/follow.model");
+const userModel = require("../models/user.model");
 const User = require("../models/user.model");
+
+
+const imagekit = new ImageKit({
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY
+})
 
 /* ======================================================
    SEND FOLLOW REQUEST
@@ -134,9 +142,59 @@ async function unfollowUser(req, res) {
     }
 }
 
+async function getProfile(req, res) {
+
+    let username = req.params.username
+
+    let user = await userModel.findOne({ username })
+        .select('-password')
+
+    if (!user) {
+        return res.status(404).json({
+            message: "user not found"
+        })
+    }
+
+    res.json(user)
+}
+
+async function updateProfile(req, res) {
+
+    let userId = req.user.id
+    let { name, bio } = req.body
+
+    let uploadData = { name, bio }
+    if (req.file) {
+
+         let uploadfile = await imagekit.files.upload({
+                file: await toFile(req.file.buffer,req.file.originalname),
+                 fileName: `profileimage-${Date.now()}.jpg`,
+                folder: 'insta-clone'
+            })
+
+        uploadData.profileImage = uploadfile.url
+    }
+
+
+    let user = await userModel.findByIdAndUpdate(
+        userId,
+        uploadData,
+        { returnDocument: 'after' }
+    ).select('-password')
+
+    res.json({
+        message: "Profile updated successfully",
+        user
+    })
+}
+
+
+
 module.exports = {
     followUser,
     acceptFollow,
     rejectFollow,
-    unfollowUser
+    unfollowUser,
+    updateProfile,
+    getProfile
 };

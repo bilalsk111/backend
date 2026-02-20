@@ -1,11 +1,9 @@
-let express = require('express')
-let authRouter = express.Router();
-let {registerController,loginController} = require('../controllers/auth.controller')
- 
+const express = require("express")
+const router = express.Router()
+const { registerController, loginController, GetMe } = require("../controllers/auth.controller")
 
-authRouter.post('/register',registerController)
-authRouter.post('/login',loginController)
+router.post("/register", registerController)
+router.post("/login", loginController)
+router.get("/get-me", authmiddleware, GetMe)
 
-
-
-module.exports = authRouter
+module.exports = router
