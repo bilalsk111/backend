@@ -3,89 +3,116 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fafafa;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .auth-card {
-  width: 350px;
+  width: 380px;
   background: #fff;
-  border: 1px solid #dbdbdb;
-  padding: 40px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 45px 40px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease-in-out;
 }
 
 .logo {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-input {
-  padding: 10px;
-  border: 1px solid #dbdbdb;
-  background: #fafafa;
-  font-size: 14px;
-  border-radius: 3px;
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: 0.2s;
 
-  &:focus {
-    outline: none;
-    border-color: #a8a8a8;
+  &:focus-within {
+    border-color: #2563eb;
+    background: #fff;
+  }
+
+  .icon {
+    color: #9ca3af;
+    margin-right: 8px;
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    flex: 1;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .toggle {
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
   }
 }
 
 button {
   margin-top: 10px;
-  padding: 10px;
-  background: #0095f6;
+  padding: 12px;
+  background: #2563eb;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.2s;
 
   &:hover {
-    background: #007ed6;
+    background: #1e40af;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 }
 
-.divider {
-  margin: 20px 0;
-  position: relative;
+.error {
   font-size: 12px;
-  color: #8e8e8e;
-
-  span {
-    background: #fff;
-    padding: 0 10px;
-  }
-
-  &::before {
-    content: "";
-    height: 1px;
-    width: 100%;
-    background: #dbdbdb;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    z-index: -1;
-  }
+  color: #dc2626;
+  margin-left: 4px;
 }
 
 .switch {
+  margin-top: 25px;
   font-size: 14px;
-  margin-top: 20px;
+  text-align: center;
 
   a {
-    color: #0095f6;
-    text-decoration: none;
+    color: #2563eb;
     font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
