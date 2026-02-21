@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../style/form.scss";
 import { useAuth } from "../hooks/useAuth";
 
-
 const Login = () => {
-const {user,loading,handlelogin} = useAuth();
+  const { handlelogin, loading } = useAuth();
   const navigate = useNavigate()
   const [form, setForm] = useState({
     username: "",
@@ -47,7 +46,7 @@ const {user,loading,handlelogin} = useAuth();
 
     try {
       await handlelogin(form.username, form.password);
-      navigate("/feed");
+      navigate("/");
     } catch (err) {
       setErrors({
         server:
