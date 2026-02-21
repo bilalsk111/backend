@@ -39,7 +39,7 @@ let userSchema  = new mongoose.Schema({
         default:'https://ik.imagekit.io/0dkbfujo9/avatar-default-user-profile-icon-simple-flat-vector-57234190.webp'
     }
 
-},{timestamps:true})   // FIXED spelling
+},{timestamps:true})
 
 let userModel = mongoose.model("User", userSchema);
 
