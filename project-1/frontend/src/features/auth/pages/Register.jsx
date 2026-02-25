@@ -48,7 +48,7 @@ const Register = () => {
         form.email.trim(),
         form.password
       );
-      navigate("/feed");
+      navigate("/");
     } catch (err) {
       setErrors({
         server: err.response?.data?.message || "Registration failed",

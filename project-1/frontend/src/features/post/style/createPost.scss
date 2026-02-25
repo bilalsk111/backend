@@ -1,0 +1,218 @@
+.create-post-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+
+  // Simulate Instagram's Top Progress Bar
+  .global-progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    z-index: 2001;
+
+    .fill {
+      height: 100%;
+      background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      transition: width 0.3s ease;
+    }
+  }
+
+  // Toast Style
+  .insta-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #262626;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .create-card {
+    background: #262626;
+    width: 90%;
+    max-width: 800px;
+    height: 600px; // Increased height
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid #363636;
+      min-height: 48px;
+      
+      .header-left, .header-right {
+        width: 60px;
+        display: flex;
+      }
+      
+      .header-right { justify-content: flex-end; }
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+      }
+
+      .share-btn {
+        background: none;
+        border: none;
+        color: #0095f6;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        &:hover { color: #fff; }
+        &:disabled { opacity: 0.3; }
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+
+    .card-body {
+      flex: 1;
+      background: #000;
+      display: flex;
+      overflow: hidden;
+
+      .upload-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+        .icon-stack {
+          position: relative;
+          color: #fff;
+          .film-icon {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.8;
+          }
+        }
+
+        h2 {
+          font-size: 20px;
+          font-weight: 300;
+          color: #fff;
+        }
+
+        .select-btn {
+          background: #0095f6;
+          color: #fff;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          &:hover { background: #1877f2; }
+        }
+      }
+
+      .editor-view {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+        .media-preview {
+          flex: 1.2;
+          background: #000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-right: 1px solid #363636;
+          img, video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .caption-side {
+          flex: 0.8;
+          background: #262626;
+          display: flex;
+          flex-direction: column;
+          padding: 16px;
+
+          .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            .avatar {
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+            .username {
+              font-size: 14px;
+              font-weight: 600;
+              color: #fff;
+            }
+          }
+
+          textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            resize: none;
+            font-size: 16px;
+            outline: none;
+            &::placeholder { color: #8e8e8e; }
+          }
+
+          .caption-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 10px;
+            .char-count {
+              color: #8e8e8e;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 50px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}

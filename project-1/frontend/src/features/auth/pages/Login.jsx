@@ -93,7 +93,7 @@ const Login = () => {
             <small className="error server">{errors.server}</small>
           )}
 
-          <button type="submit" disabled={loading}>
+          <button type="submit">
             {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
