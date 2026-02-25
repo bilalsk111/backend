@@ -32,15 +32,17 @@ const registerController = async (req, res) => {
     });
 
     res.cookie("token", token, { httpOnly: true });
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        username: user.username,
-        email: user.email,
-        bio: user.bio,
-        name: user.name,
-      },
-    });
+   res.status(201).json({
+  message: "User registered successfully",
+  user: {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    bio: user.bio,
+    name: user.name,
+    profileImage: user.profileImage,
+  },
+});
   } catch (error) {
     res.status(500).json({ message: "Server error during registration" });
   }
@@ -51,7 +53,7 @@ const loginController = async (req, res) => {
     const { username, password } = req.body;
     const user = await userModel.findOne({
       $or: [{ username }, { email: username }],
-    });
+    }).select('+password')
 
     if (!user) return res.status(401).json({ message: "User not found" });
 
@@ -64,14 +66,16 @@ const loginController = async (req, res) => {
     });
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({
-      message: "Login successful",
-      user: {
-        username: user.username,
-        email: user.email,
-        bio: user.bio,
-        name: user.name,
-      },
-    });
+  message: "Login successful",
+  user: {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    bio: user.bio,
+    name: user.name,
+    profileImage: user.profileImage,
+  },
+});
   } catch (error) {
     res.status(500).json({ message: "Server error during login" });
   }

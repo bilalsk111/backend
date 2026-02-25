@@ -43,14 +43,37 @@ async function createPost(req,res){
 
 
 // GET FEED (own posts only)
-async function GetFeed(req,res){
-    let userId = req.user.id
-    let post = await postModel
-                    .find({user:userId})
-                    .sort({creatAt: -1})
-        res.status(201).json({
-        post
-    })
+async function GetFeed(req, res) {
+    try {
+        let userId = req.user.id;
+
+        let posts = await postModel
+            .find()
+            .populate("user", "username profileImage")
+            .sort({ createdAt: -1 });
+
+        const postsWithLikes = await Promise.all(
+            posts.map(async (post) => {
+                const totalLikes = await likeModel.countDocuments({ post: post._id });
+
+                const isLiked = await likeModel.exists({
+                    post: post._id,
+                    user: userId
+                });
+
+                return {
+                    ...post.toObject(),
+                    totalLikes,
+                    isLiked: !!isLiked
+                };
+            })
+        );
+
+        res.json({ post: postsWithLikes });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
 }
 
 
@@ -73,44 +96,34 @@ async function detailsPosts(req,res){
  * Route: POST /api/posts/like/:id
  */
 async function toggleLike(req, res) {
-
     const userId = req.user.id;
-    const postId = req.params.postId;
+    const { postId } = req.params;
 
     const post = await postModel.findById(postId);
-    if (!post) {
-        return res.status(404).json({ message: "Post not found" });
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const existing = await likeModel.findOne({ post: postId, user: userId });
+
+    let liked;
+
+    if (existing) {
+        await existing.deleteOne();
+        liked = false;
+    } else {
+        await likeModel.create({ post: postId, user: userId });
+        liked = true;
     }
 
-    const existingLike = await likeModel.findOne({
-        post: postId,
-        user: userId
-    });
+    const totalLikes = await likeModel.countDocuments({ post: postId });
 
-    if (existingLike) {
-        await likeModel.deleteOne({ _id: existingLike._id });
-
-        return res.json({
-            message: "Post unliked"
-        });
-    }
-
-    await likeModel.create({
-        post: postId,
-        user: userId
-    });
-
-    res.json({
-        message: "Post liked"
-    });
+    res.json({ liked, totalLikes });
 }
 async function getPostLikes(req, res) {
-
-    const postId = req.params.postId;
+    const { postId } = req.params;
 
     const likes = await likeModel
         .find({ post: postId })
-        .populate('user', 'username');
+        .populate("user", "username profileImage");
 
     res.json({
         totalLikes: likes.length,
