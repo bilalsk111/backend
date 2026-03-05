@@ -98,7 +98,7 @@ async function logout(req, res) {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: "No token" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = req.user;
 
     // Remaining expiry time
     const expiry = decoded.exp - Math.floor(Date.now() / 1000);

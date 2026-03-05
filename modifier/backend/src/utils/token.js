@@ -10,7 +10,7 @@ const generateToken = (user) =>{
     {
       id:user._id,
       username:user.username,
-      jti
+      jti,
     },process.env.JWT_SECRET,{expiresIn:'15m'}
   )
 

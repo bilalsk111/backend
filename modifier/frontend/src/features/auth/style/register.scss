@@ -1,0 +1,88 @@
+.auth-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  overflow: hidden;
+
+  .auth-card {
+    background: rgba(17, 17, 17, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px; // Responsive width
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #fff;
+      font-size: 1.8rem;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+
+      .icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        pointer-events: none; // Icon click shouldn't block input
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 45px; // Equal padding for icons
+        background: #252525;
+        border: 1px solid #333;
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        box-sizing: border-box; // FIX: Prevents input from overflowing card
+
+        &:focus {
+          border-color: #00c6ff;
+          background: #2a2a2a;
+          outline: none;
+        }
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #888;
+        display: flex;
+        align-items: center;
+        
+        &:hover { color: #00c6ff; }
+      }
+    }
+    .link{
+      cursor: pointer;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: white;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+
+      &:hover {
+        filter: brightness(1.1);
+        transform: scale(1.02);
+      }
+    }
+  }
+}
