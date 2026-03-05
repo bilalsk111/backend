@@ -2,12 +2,15 @@ import React from 'react'
 import { RouterProvider } from 'react-router-dom'
 import router from './app.route'
 import { AuthProvider } from './features/auth/auth.context'
+import { SongProvider } from './features/home/song.context'
 
 const App = () => {
   return (
     <div>
    <AuthProvider>
-    <RouterProvider router={router} />
+    <SongProvider>
+ <RouterProvider router={router} />
+    </SongProvider>
    </AuthProvider>
     </div>
   )

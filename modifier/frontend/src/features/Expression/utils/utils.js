@@ -36,32 +36,63 @@ export const detect = ({ landmarkerRef, videoRef, setExpression }) => {
     );
 
     if (results.faceBlendshapes?.length > 0) {
-        const blendshapes = results.faceBlendshapes[ 0 ].categories;
+        const blendshapes = results.faceBlendshapes[0].categories;
 
         const getScore = (name) =>
             blendshapes.find((b) => b.categoryName === name)?.score || 0;
 
         const smileLeft = getScore("mouthSmileLeft");
         const smileRight = getScore("mouthSmileRight");
+
         const jawOpen = getScore("jawOpen");
-        const browUp = getScore("browInnerUp");
+
+        const browInnerUp = getScore("browInnerUp");
+        const browOuterUpLeft = getScore("browOuterUpLeft");
+        const browOuterUpRight = getScore("browOuterUpRight");
+
         const frownLeft = getScore("mouthFrownLeft");
         const frownRight = getScore("mouthFrownRight");
 
-        console.log(getScore("mouthFrownLeft"))
+        let currentExpression = "neutral";
 
-        let currentExpression = "Neutral";
+        // average values for stability
+        const smile = (smileLeft + smileRight) / 2;
+        const frown = (frownLeft + frownRight) / 2;
 
-        if (smileLeft > 0.5 && smileRight > 0.5) {
-            currentExpression = "Happy 😄";
-        } else if (jawOpen > 0.2 && browUp > 0.2) {
-            currentExpression = "Surprised 😲";
-        } else if (frownLeft > 0.015 && frownRight > 0.015) {
-            currentExpression = "Anger 😠";
-        } else if (frownLeft > 0.0001 && frownRight > 0.0001) {
-            currentExpression = "Sad 😢";
+        const browRaise = Math.max(
+            browInnerUp,
+            browOuterUpLeft,
+            browOuterUpRight
+        );
+
+        // DEBUG values (helps tuning)
+        console.log({
+            smile,
+            frown,
+            jawOpen,
+            browRaise
+        });
+
+        // EXPRESSION DETECTION (sensitive)
+        if (jawOpen > 0.30 && browRaise > 0.20) {
+            currentExpression = "surprise";
         }
-            
+
+        else if (smile > 0.22) {
+            // detects even slight smile
+            currentExpression = "happy";
+        }
+
+        else if (frown > 0.32) {
+            currentExpression = "angry";
+        }
+
+        else if (frown > 0.13) {
+            currentExpression = "sad";
+        }
+
         setExpression(currentExpression);
+
+        return currentExpression
     }
 };

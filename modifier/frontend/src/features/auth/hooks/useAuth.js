@@ -61,7 +61,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     handleGetMe();
-  }, []);
+  }, [setUser, setLoading]);
 
   return {
     user,

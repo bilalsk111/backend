@@ -5,7 +5,11 @@ const redisClient = createClient({
 });
 
 redisClient.on("error", (err) => {
-  console.log("Redis Error:", err.message);
+  if (err.code === "ECONNRESET") {
+    console.log("Redis connection reset, reconnecting...");
+  } else {
+    console.error("Redis Error:", err);
+  }
 });
 
 const connectRedis = async () => {
