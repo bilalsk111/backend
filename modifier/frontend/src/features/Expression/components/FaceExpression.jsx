@@ -1,98 +1,130 @@
 import { useEffect, useRef, useState } from "react";
-import { detect, init } from "../utils/utils";
-import { ScanFace, Sparkles, RefreshCcw } from "lucide-react";
-import "../../Expression/style/scan.scss";
+import { init, detect } from "../utils/utils";
+import { Camera, RefreshCcw, ScanFace } from "lucide-react";
+
+import "../style/scan.scss";
 
 const moodEmoji = {
-  Happy: "😊",
-  Sad: "😔",
-  Angry: "😠",
-  Surprised: "😲",
-  Neutral: "😐"
+  happy: "😊",
+  sad: "😔",
+  angry: "😠",
+  surprised: "😲",
+  neutral: "😐",
 };
 
-export default function FaceExpression({onClick = ()=>{ }}) {
+export default function FaceExpression({ onClick = () => {} }) {
   const videoRef = useRef(null);
   const landmarkerRef = useRef(null);
   const streamRef = useRef(null);
 
-  const [expression, setExpression] = useState("Waiting...");
+  const [expression, setExpression] = useState("neutral");
   const [isScanning, setIsScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
 
+  /**
+   * Initialize camera + mediapipe
+   */
   useEffect(() => {
-    init({ landmarkerRef, videoRef, streamRef });
+    const setupCamera = async () => {
+      await init({ landmarkerRef, videoRef, streamRef });
+      setCameraReady(true);
+    };
 
+    setupCamera();
 
     return () => {
       if (landmarkerRef.current) landmarkerRef.current.close();
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
 
-  const handleDetection = async () => {
-    setIsScanning(true);
-    setExpression("Analyzing...");
+  /**
+   * Detect expression
+   */
+  const handleDetectExpression = async () => {
+    if (isScanning || !cameraReady) return;
 
-    const expression =  await detect({ landmarkerRef, videoRef, setExpression });
-    onClick(expression)
-    setTimeout(() => setIsScanning(false), 1000);
+    setIsScanning(true);
+
+    const result = await detect({
+      landmarkerRef,
+      videoRef,
+      setExpression,
+    });
+
+    document.body.className = `mood-${result}`;
+
+    onClick(result);
+
+    setTimeout(() => {
+      setIsScanning(false);
+    }, 900);
   };
 
   return (
-    <div className="face-scanner-container">
-      <div className="glass-card">
-
-        <div className="card-header">
-          <ScanFace size={18}/>
-          <span>AI Expression Scanner</span>
+    <div className="scanner-container">
+      <div className="scanner-card">
+        {/* HEADER */}
+        <div className="scanner-header">
+          <ScanFace size={18} />
+          <span>{cameraReady ? "AI FACE SCANNER" : "INITIALIZING..."}</span>
+          <div className={`status-dot ${cameraReady ? "online" : "offline"}`} />
         </div>
 
-        <div className={`video-wrapper ${isScanning ? "scanning" : ""}`}>
-          <video ref={videoRef} className="video-feed" playsInline />
+        {/* CAMERA */}
+        <div className="camera-wrapper">
+          <video
+            ref={videoRef}
+            className="camera-feed"
+            autoPlay
+            muted
+            playsInline
+          />
 
-          <div className="scan-line"/>
-          <div className="scanner-grid"/>
+          <div className="scan-line" />
+          <div className="scanner-grid" />
 
-          <div className="corner tl"/>
-          <div className="corner tr"/>
-          <div className="corner bl"/>
-          <div className="corner br"/>
+          <div className="corner tl" />
+          <div className="corner tr" />
+          <div className="corner bl" />
+          <div className="corner br" />
 
           {isScanning && (
-            <div className="analysis-overlay">
-              <Sparkles size={26}/>
-              <span>AI analyzing face...</span>
+            <div className="scan-overlay">
+              <RefreshCcw className="spin" size={28} />
+              <p>Analyzing Face...</p>
             </div>
           )}
         </div>
 
-        <div className="info-section">
-
-          <div className="status-row">
-            <div className={`status-dot ${isScanning ? "pulse" : ""}`}/>
-            <span>{isScanning ? "Processing" : "Live Camera"}</span>
-          </div>
-
-          <h2 className={`expression-text ${isScanning ? "blur" : ""}`}>
-            {moodEmoji[expression] || ""} {expression}
+        {/* RESULT */}
+        <div className="expression-section">
+          <h2 className="expression-text">
+            {moodEmoji[expression.toLowerCase()] || "😐"} {expression}
           </h2>
-
-          <button
-            className="detect-btn"
-            onClick={handleDetection}
-            disabled={isScanning}
-          >
-            {isScanning ? (
-              <RefreshCcw className="spin" size={18}/>
-            ) : (
-              <Sparkles size={18}/>
-            )}
-            {isScanning ? "Scanning..." : "Detect Expression"}
-          </button>
-
         </div>
+
+        {/* BUTTON */}
+        <button
+          className="scan-button"
+          onClick={handleDetectExpression}
+          disabled={!cameraReady || isScanning}
+        >
+          {isScanning ? (
+            <>
+              <RefreshCcw size={18} className="spin" />
+              Scanning...
+            </>
+          ) : (
+            <>
+              <Camera size={18} />
+              Capture Expression
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

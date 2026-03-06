@@ -35,64 +35,41 @@ export const detect = ({ landmarkerRef, videoRef, setExpression }) => {
         performance.now()
     );
 
-    if (results.faceBlendshapes?.length > 0) {
+    if (results.faceBlendshapes?.[0]?.categories) {
         const blendshapes = results.faceBlendshapes[0].categories;
 
         const getScore = (name) =>
             blendshapes.find((b) => b.categoryName === name)?.score || 0;
 
-        const smileLeft = getScore("mouthSmileLeft");
-        const smileRight = getScore("mouthSmileRight");
-
+        // Essential blendshapes for natural detection
+        const smile = (getScore("mouthSmileLeft") + getScore("mouthSmileRight")) / 2;
+        const frown = (getScore("mouthFrownLeft") + getScore("mouthFrownRight")) / 2;
+        const browInnerUp = getScore("browInnerUp") / 2 ; // Key for Sad
+        const browDown = (getScore("browDownLeft") + getScore("browDownRight")) / 2; // Key for Angry
+        const noseSneer = (getScore("noseSneerLeft") + getScore("noseSneerRight")) / 2; // Key for Angry
         const jawOpen = getScore("jawOpen");
+        const browOuterUp = (getScore("browOuterUpLeft") + getScore("browOuterUpRight")) / 2;
 
-        const browInnerUp = getScore("browInnerUp");
-        const browOuterUpLeft = getScore("browOuterUpLeft");
-        const browOuterUpRight = getScore("browOuterUpRight");
+        let currentExpression = "Neutral";
 
-        const frownLeft = getScore("mouthFrownLeft");
-        const frownRight = getScore("mouthFrownRight");
-
-        let currentExpression = "neutral";
-
-        // average values for stability
-        const smile = (smileLeft + smileRight) / 2;
-        const frown = (frownLeft + frownRight) / 2;
-
-        const browRaise = Math.max(
-            browInnerUp,
-            browOuterUpLeft,
-            browOuterUpRight
-        );
-
-        // DEBUG values (helps tuning)
-        console.log({
-            smile,
-            frown,
-            jawOpen,
-            browRaise
-        });
-
-        // EXPRESSION DETECTION (sensitive)
-        if (jawOpen > 0.30 && browRaise > 0.20) {
-            currentExpression = "surprise";
-        }
-
-        else if (smile > 0.22) {
-            // detects even slight smile
+        // 1. Happy: Trigger on light smile OR eye squinting with mouth lift
+        if (smile > 0.15) {
             currentExpression = "happy";
-        }
-
-        else if (frown > 0.32) {
+        } 
+        // 2. Angry: As seen in your image, nose wrinkles and brows go down
+        else if (browDown > 0.2 || noseSneer > 0.2) {
             currentExpression = "angry";
         }
-
-        else if (frown > 0.13) {
+        // 3. Sad: Inner brows raised + slight frown (very sensitive)
+        else if (browInnerUp > 0.2 || frown > 0.1) {
+            currentExpression = "surprised";
+        }
+        // 4. Surprised: High brows or dropping jaw
+        else if (jawOpen > 0.1 || browOuterUp > 0.2) {
             currentExpression = "sad";
         }
 
         setExpression(currentExpression);
-
-        return currentExpression
+        return currentExpression;
     }
 };

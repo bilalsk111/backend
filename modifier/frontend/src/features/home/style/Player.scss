@@ -1,157 +1,215 @@
-$green: #1db954;
-$text-main: #ffffff;
-$text-dim: #b3b3b3;
+$green: var(--link-color);
+$text: var(--text-main);
+$dim: var(--dim);
 
-.spotify-player {
-  background: #000;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
+.player {
   position: fixed;
   bottom: 0;
   width: 100%;
-  border-top: 1px solid #282828;
-  z-index: 1000;
+  height: 90px;
+  background: var(--card-bg);
+  border-top: 1px solid var(--input-border);
 
-  .icon-btn {
-    background: none;
-    border: none;
-    color: $text-dim;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: 0.2s;
-    &:hover { color: $text-main; transform: scale(1.05); }
-  }
-
-  .player-left {
-    width: 30%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    .now-playing-art { width: 56px; height: 56px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-    .song-meta {
-      .song-name { color: $text-main; font-size: 14px; font-weight: 500; margin: 0; white-space: nowrap; }
-      .song-mood { color: $text-dim; font-size: 11px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    }
-  }
-
-  .player-center {
-    flex: 1;
-    max-width: 40%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .control-buttons {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin-bottom: 8px;
-
-      .play-btn {
-        padding: 5px;
-  background-color: #ffffff; // White circle
-  border: none;
-  border-radius: 50%;
-  width: 55px;
-  height: 55px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.1s cubic-bezier(0.3, 0, 0, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); // Adds depth
-
-  svg {
-    width: 28px;  // Increased size
-    height: 28px;
-    color: #000000; // Black icon
-  }
-
-  &:hover {
-    transform: scale(1.06);
-    background-color: #f6f6f6; // Slight highlight on hover
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+  padding: 0 16px;
+  gap: 20px;
 }
-    }
 
-    .playback-wrapper {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      .time { font-size: 11px; color: $text-dim; min-width: 35px; text-align: center; }
+/* LEFT */
 
-      .progress-container {
-        flex: 1;
-        height: 12px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
+.player-left{
 
-        &:hover {
-          .progress-bar { height: 6px; } // Thicker on hover
-          .progress-fill { background: $green; }
-          .progress-knob { opacity: 1; }
-        }
+flex:1;
+display:flex;
+align-items:center;
+gap:12px;
 
-        .progress-bar {
-          width: 100%;
-          height: 4px;
-          background: #4f4f4f;
-          border-radius: 4px;
-          transition: height 0.1s;
-        }
+.cover{
+width:52px;
+height:52px;
+border-radius:4px;
+object-fit:cover;
+}
 
-        .progress-fill {
-          height: 100%;
-          background: #fff;
-          border-radius: 4px;
-          position: relative;
-          .progress-knob {
-            opacity: 0;
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          }
-        }
-      }
-    }
+.meta{
+display:flex;
+flex-direction:column;
+
+.title{
+color:$text;
+font-size:14px;
+max-width:200px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.mood{
+color:$dim;
+font-size:11px;
+}
+}
+
+.like{
+color:$dim;
+cursor:pointer;
+
+&:hover{
+color:$text;
+}
+}
+
+}
+
+/* CENTER */
+
+.player-center{
+
+flex:2;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+
+.controls{
+
+display:flex;
+align-items:center;
+gap:20px;
+
+svg{
+color:$dim;
+cursor:pointer;
+
+&:hover{
+color:$text;
+}
+}
+
+button{
+background:none;
+border:none;
+color:$dim;
+display:flex;
+align-items:center;
+gap:3px;
+cursor:pointer;
+}
+
+.play{
+width:42px;
+height:42px;
+border-radius:50%;
+background:white;
+color:black;
+font-size:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+}
+
+.progress-wrapper{
+
+width:100%;
+display:flex;
+align-items:center;
+gap:10px;
+
+span{
+font-size:11px;
+color:$dim;
+width:35px;
+text-align:center;
+}
+
+.progress{
+
+flex:1;
+height:6px;
+background:var(--input-border);
+border-radius:5px;
+cursor:pointer;
+
+}
+
+.progress-fill{
+height:100%;
+background:$green;
+border-radius:5px;
+}
+
+}
+
+}
+
+/* RIGHT */
+
+.player-right{
+
+flex:1;
+display:flex;
+justify-content:flex-end;
+align-items:center;
+gap:10px;
+
+input{
+width:110px;
+accent-color:$green;
+}
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.player{
+flex-direction:column;
+height:auto;
+padding:10px;
+gap:10px;
+}
+
+.player-left{
+width:100%;
+}
+
+.player-center{
+width:100%;
+}
+
+.player-right{
+display:none;
+}
+
+.controls{
+gap:16px;
+}
+
+.progress-wrapper span{
+display:none;
+}
+
+}
+
+/* Premium Player */
+.player {
+  background: var(--hover-bg);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--input-border);
+  padding: 0 40px;
+  
+  .play {
+    background: var(--text-main) !important;
+    color: var(--auth-bg) !important;
+    &:hover { transform: scale(1.1); }
   }
-
-  .player-right {
-    width: 30%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 20px;
-
-    .speed-selector, .volume-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: $text-dim;
-      &:hover { color: #fff; }
-      select { background: transparent; border: none; color: inherit; font-size: 12px; font-weight: 700; cursor: pointer; outline: none; }
-      input[type="range"] {
-        width: 90px;
-        accent-color: #fff;
-        cursor: pointer;
-        &:hover { accent-color: $green; }
-      }
-    }
+  
+  .progress-fill {
+    background: var(--link-color) !important;
+    box-shadow: 0 0 10px var(--link-color);
   }
 }
