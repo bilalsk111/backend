@@ -21,3 +21,7 @@ export async function GetMe(){
     let res = await api.get('/get-me')
     return res.data
 }
+
+export async function logout(){
+    await api.post('/logout')
+}

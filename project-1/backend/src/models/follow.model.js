@@ -1,25 +1,22 @@
-let mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-let followSchema = new mongoose.Schema({
-    follower:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required: [true,'follower is required ']
+const followSchema = new mongoose.Schema(
+  {
+    follower: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    followee:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required: [true,'followee is required ']
+    followee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    status:{
-        type:String,
-        enum: ['pending','accpted','rejected'],
-        default:'pending'
-    }
-},{timestamps:true})
+  },
+  { timestamps: true }
+);
 
-followSchema.index({follower:1,followee:1},{unique:true})
+// Prevent duplicate follow
+followSchema.index({ follower: 1, followee: 1 }, { unique: true });
 
-let follow = mongoose.model('follow',followSchema)
-
-module.exports = follow
+module.exports = mongoose.model("Follow", followSchema);

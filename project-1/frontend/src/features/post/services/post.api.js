@@ -1,27 +1,42 @@
-import axios from 'axios'
+import axios from "axios";
 
-let api = axios.create({
-    baseURL:'http://localhost:3000/api',
-    withCredentials:true
-})
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+  withCredentials: true,
+});
 
-export async function GetFeed(){
-    let res = await api.get('/posts/feed')
-    return res.data
-}
+// GET FEED
+export const GetFeed = async () => {
+  const res = await api.get("/posts/feed");
+  return res.data; // { posts: [...] }
+};
 
-export async function toggleLike(postId) {
-    const res = await api.post(`/posts/like/${postId}`);
-    return res.data;
-}
-export async function GetLikes(postId) {
-    const res = await api.get(`/posts/likes/${postId}`)
-    return res.data
-}
+// LIKE
+export const toggleLike = async (postId) => {
+  const res = await api.post(`/posts/like/${postId}`);
+  return res.data;
+};
 
-export const createPost = async (formData) =>{
-    const res = await api.post('/posts/create',formData,{
-        headers: {'Content-Type': "multipart/form-data"}
-    })
-    return res.data
-}
+// CREATE
+export const createPost = async (formData) => {
+  const res = await api.post("/posts/create", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};
+
+// DELETE
+export const deletePost = async (id) => {
+  const res = await api.delete(`/posts/${id}`);
+  return res.data;
+};
+
+// SAVE
+export const toggleSavePost = async (id) => {
+  const res = await api.post(`/posts/${id}/save`);
+  return res.data;
+};
+export const getSavedPosts = async () => {
+  const res = await api.get("/posts/saves"); // FIXED
+  return res.data;
+};

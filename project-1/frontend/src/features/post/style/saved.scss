@@ -1,0 +1,122 @@
+.saved-page-container {
+  max-width: 70%;
+  margin: 0 auto;
+  padding: 30px 20px;
+  color: var(--text-main);
+
+  .saved-header {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 50px;
+
+    .icon-circle {
+      width: 62px;
+      height: 62px;
+      border: 2px solid var(--text-main);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+    }
+    .back-btn{
+      background: transparent;
+      color: var(--text-main);
+    }
+    h1 {
+      font-size: 30px;
+      font-weight: 300;
+      color: var(--text-main);
+    }
+
+    p {
+      font-size: 12px;
+      color: var(--icon-color);
+      margin-top: 5px;
+    }
+  }
+
+  .saved-tabs {
+    border-top: 1px solid var(--input-border);
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    span {
+      padding: 15px 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      color: var(--icon-color);
+
+      &.active {
+        color: var(--text-main);
+        border-top: 1px solid var(--text-main);
+        margin-top: -1px;
+      }
+    }
+  }
+
+  .saved-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px; // Insta uses tiny gaps between grid items
+
+    .saved-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1; // Forces square shape
+      cursor: pointer;
+
+      .thumbnail-wrapper {
+        width: 100%;
+        height: 100%;
+
+        img, video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; // Fills the square perfectly
+          border-radius: 10px;
+        }
+
+        .icon-overlay {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+        }
+
+        &:hover::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.12); // Subtle overlay using neutral opacity
+        }
+      }
+    }
+  }
+.unsave-btn{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+  .no-saved {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 0;
+  color: var(--icon-color);
+  }
+}
+
+// Mobile view adjustments
+@media (max-width: 768px) {
+  .saved-page-container {
+    padding: 0;
+    .saved-grid { gap: 1px; }
+  }
+}

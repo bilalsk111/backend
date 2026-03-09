@@ -1,12 +1,26 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
-html,body,#root{
-    height: 100%;
+
+html, body, #root {
+  height: 100%;
 }
-html{
-    background-color: #111;
-    font-family: monospace;
+
+body {
+  background-color: var(--auth-bg);
+  color: var(--text-main);
 }
+
+// Import shared CSS variables and feature styles
+@import './_variables.scss';
+
+// Feature styles
+@import '../auth/style/form.scss';
+@import '../post/style/createPost.scss';
+@import '../post/style/feed.scss';
+@import '../post/style/saved.scss';
+@import '../post/style/sidebar.scss';
+@import '../user/style/profile.scss';

@@ -7,172 +7,166 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.75);
   z-index: 2000;
+  backdrop-filter: blur(4px);
 
-  // Simulate Instagram's Top Progress Bar
   .global-progress-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 3px;
-    background: transparent;
-    z-index: 2001;
-
+    background: var(--card-bg);
+    z-index: 2005;
     .fill {
       height: 100%;
-      background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      transition: width 0.3s ease;
+      background: var(--story-gradient);
+      transition: width 0.4s ease;
     }
   }
 
-  // Toast Style
-  .insta-toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #262626;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    animation: slideUp 0.3s ease-out;
+  .global-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
   }
 
   .create-card {
-    background: #262626;
-    width: 90%;
-    max-width: 800px;
-    height: 600px; // Increased height
+  background: var(--card-bg);
+    width: 420px; // Starting width (Square upload)
+    height: 460px;
     border-radius: 12px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-    .card-header {
+    &.expanded {
+      width: 780px; // Instagram Desktop split-view width
+      height: 520px;
+    }
+
+      .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 16px;
-      border-bottom: 1px solid #363636;
-      min-height: 48px;
+        border-bottom: 1px solid var(--input-border);
+        height: 42px;
+        background: transparent;
       
       .header-left, .header-right {
-        width: 60px;
+        width: 48px;
         display: flex;
       }
-      
-      .header-right { justify-content: flex-end; }
 
       h3 {
         font-size: 16px;
         font-weight: 600;
-        color: #fff;
+        color: var(--text-main);
         margin: 0;
       }
 
-      .share-btn {
+      .action-btn, .share-btn {
         background: none;
         border: none;
-        color: #0095f6;
-        font-weight: 600;
-        font-size: 14px;
+        color: var(--link-color);
         cursor: pointer;
-        &:hover { color: #fff; }
-        &:disabled { opacity: 0.3; }
+        padding: 0;
       }
 
-      .back-btn {
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
+      .share-btn {
+        color: var(--link-color);
+        font-weight: 600;
+        &:hover { color: var(--text-main); }
+        &:disabled { opacity: 0.4; cursor: default; }
       }
     }
 
     .card-body {
-      flex: 1;
-      background: #000;
-      display: flex;
-      overflow: hidden;
+    flex: 1;
+    background: transparent;
+    display: flex;
+    overflow: hidden;
 
-      .upload-placeholder {
+        .upload-placeholder {
         width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 20px;
+        text-align: center;
+        cursor: pointer;
 
-        .icon-stack {
+          .icon-stack {
+          margin-bottom: 16px;
+          color: var(--text-main);
           position: relative;
-          color: #fff;
-          .film-icon {
+          .sub-icon {
             position: absolute;
-            top: 10px;
-            left: 20px;
-            opacity: 0.8;
+            bottom: -5px;
+            right: -5px;
           }
         }
 
         h2 {
           font-size: 20px;
-          font-weight: 300;
-          color: #fff;
+          font-weight: 400;
+          color: var(--text-main);
+          margin-bottom: 24px;
         }
 
         .select-btn {
-          background: #0095f6;
-          color: #fff;
+          background: var(--link-color);
+          color: var(--btn-text);
           border: none;
-          padding: 8px 16px;
+          padding: 7px 16px;
           border-radius: 8px;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
-          &:hover { background: #1877f2; }
+          &:hover { opacity: 0.9; }
         }
       }
 
-      .editor-view {
+        .editor-view {
         display: flex;
         width: 100%;
         height: 100%;
 
         .media-preview {
-          flex: 1.2;
-          background: #000;
+          flex: 1;
+          background: var(--card-bg);
           display: flex;
           align-items: center;
           justify-content: center;
-          border-right: 1px solid #363636;
           img, video {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; // Instagram style fills the box
           }
         }
 
-        .caption-side {
-          flex: 0.8;
-          background: #262626;
+          .caption-side {
+          width: 340px;
+          min-width: 340px;
+          background: var(--card-bg);
           display: flex;
           flex-direction: column;
-          padding: 16px;
+          border-left: 1px solid var(--input-border);
 
-          .user-info {
+            .user-info {
+            padding: 16px;
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
             .avatar {
               width: 28px;
               height: 28px;
@@ -182,7 +176,7 @@
             .username {
               font-size: 14px;
               font-weight: 600;
-              color: #fff;
+              color: var(--text-main);
             }
           }
 
@@ -190,29 +184,34 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: #fff;
+            color: var(--text-main);
             resize: none;
             font-size: 16px;
+            padding: 0 16px;
             outline: none;
-            &::placeholder { color: #8e8e8e; }
+            &::placeholder { color: var(--icon-color); }
           }
 
           .caption-footer {
+            padding: 8px 16px;
             display: flex;
-            justify-content: flex-end;
-            padding-top: 10px;
-            .char-count {
-              color: #8e8e8e;
-              font-size: 12px;
-            }
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--input-border);
+            .char-count { color: var(--icon-color); font-size: 12px; }
+          }
+
+          .accessibility-row {
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--input-border);
+            cursor: pointer;
+            span { font-size: 15px; color: var(--text-main); }
           }
         }
       }
     }
   }
-}
-
-@keyframes slideUp {
-  from { transform: translate(-50%, 50px); opacity: 0; }
-  to { transform: translate(-50%, 0); opacity: 1; }
 }

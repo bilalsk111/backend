@@ -1,79 +1,133 @@
 import { useContext } from "react";
 import { PostContext } from "../post.context";
 import { AuthContext } from "../../auth/auth.context";
-import { createPost, GetFeed, toggleLike } from "../services/post.api";
+import {
+  createPost,
+  deletePost,
+  GetFeed,
+  toggleLike,
+  toggleSavePost,
+} from "../services/post.api";
 
 export const usePost = () => {
-  const postContext = useContext(PostContext);
-  const authContext = useContext(AuthContext);
+  const { loading, setLoading, feed, setFeed } =
+    useContext(PostContext);
 
-  const { loading, setLoading, feed, setFeed } = postContext;
-  const { user } = authContext;
+  const { user } = useContext(AuthContext);
+
 
   const handleGetFeed = async () => {
     try {
       setLoading(true);
+
       const data = await GetFeed();
-      setFeed(data.post);
+
+      // 🔥 CORRECT PROPERTY
+      setFeed(data.posts || []);
+
     } catch (err) {
-      console.error(err);
+      console.error("Feed error:", err);
+      setFeed([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleLike = async (postId) => {
-    try {
-      const data = await toggleLike(postId);
+const handleToggleLike = async (postId) => {
+  try {
+    const res = await toggleLike(postId);
 
-      setFeed((prev) =>
-        prev.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                isLiked: data.liked,
-                totalLikes: data.totalLikes,
-              }
-            : post
-        )
-      );
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              isLiked: res.liked,
+              totalLikes: res.totalLikes,
+            }
+          : post
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+ const handleCreatePost = async (file, caption) => {
+  if (!file) return;
+  if (!user) {
+    console.error("User not loaded");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("media", file);
+  formData.append("caption", caption);
+
+  try {
+    setLoading(true);
+
+    const data = await createPost(formData);
+
+    if (!data?.newPost) {
+      console.error("Invalid post response");
+      return;
+    }
+
+    const newPost = {
+      ...data.newPost,
+      user: {
+        _id: user._id,
+        username: user.username,
+        profileImage: user.profileImage,
+      },
+      totalLikes: 0,
+      isLiked: false,
+      isSaved: false,
+    };
+
+    setFeed((prev) => [newPost, ...prev]);
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const handleDeletePost = async (postId) => {
+    const previousFeed = [...feed];
+
+    setFeed((prev) =>
+      prev.filter((post) => post._id !== postId)
+    );
+
+    try {
+      await deletePost(postId);
     } catch (err) {
-      console.error(err);
+      setFeed(previousFeed);
+
+      if (err.response?.status === 403) {
+        alert("You can't delete other users' posts");
+      }
     }
   };
 
-  const handleCreatePost = async (file, caption) => {
-    if (!file) return;
+ const handleToggleSave = async (postId) => {
+  try {
+    const res = await toggleSavePost(postId);
 
-    const formData = new FormData();
-    formData.append("media", file);
-    formData.append("caption", caption);
-
-    try {
-      setLoading(true);
-
-      const data = await createPost(formData);
-
-      if (!user) return; // safety check
-
-      const newPostFormatted = {
-        ...data.newPost,
-        user: {
-          _id: user._id,
-          username: user.username,
-          profileImage: user.profileImage,
-        },
-        totalLikes: 0,
-        isLiked: false,
-      };
-
-      setFeed((prev) => [newPostFormatted, ...prev]);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId
+          ? { ...post, isSaved: res.saved }
+          : post
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return {
     user,
@@ -82,5 +136,7 @@ export const usePost = () => {
     handleGetFeed,
     handleToggleLike,
     handleCreatePost,
+    handleDeletePost,
+    handleToggleSave,
   };
 };

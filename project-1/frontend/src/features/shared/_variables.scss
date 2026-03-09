@@ -1,0 +1,31 @@
+:root {
+  --auth-bg: #fafafa;
+  --card-bg: #ffffff;
+  --text-main: #262626;
+  --input-bg: #fafafa;
+  --input-border: #dbdbdb;
+  --icon-color: #8e8e8e;
+  --link-color: #0095f6;
+  --hover-bg: rgba(0,0,0,0.04);
+  --accent-like: #ff3040;
+  --focus-border: #a8a8a8;
+  --btn-text: #ffffff;
+  --story-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --auth-bg: #000;
+    --card-bg: #121212;
+    --text-main: #fff;
+    --input-bg: #1a1a1a;
+    --input-border: #262626;
+    --icon-color: #8e8e8e;
+    --link-color: #0095f6;
+    --hover-bg: rgba(255,255,255,0.08);
+    --accent-like: #ff3040;
+    --focus-border: #5a5a5a;
+    --btn-text: #ffffff;
+    --story-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  }
+}

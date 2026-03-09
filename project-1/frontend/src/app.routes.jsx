@@ -3,26 +3,45 @@ import Login from './features/auth/pages/Login'
 import Register from './features/auth/pages/Register'
 import Feed from './features/post/pages/Feed'
 import CreatePost from './features/post/pages/CreatePost'
+import Saved from './features/post/pages/Saved'
+import Profile from './features/user/pages/Profile'
+import MainLayout from './features/post/MainLayout'
+import Protected from './features/components/Protected'
 
 export const router = createBrowserRouter([
-    {
-        path: '/feed',
+  {
+    path: '/',
+    element: <Protected>
+      <MainLayout />
+    </Protected>, // Parent layout yahan aayega
+    children: [
+      {
+        path: 'feed',
         element: <Feed />
-    },
-    {
-        path: '/create',
+      },
+      {
+        path: 'create',
         element: <CreatePost />
-    },
-    {
-        path: '/register',
-        element: <Register />
-    },
-    {
-        path:'/login',
-        element: <Login />
-    }
-])
-
+      },
+      {
+        path: 'save',
+        element: <Saved />
+      },
+      {
+        path: 'profile/:username',
+        element: <Profile />
+      }
+    ]
+  },
+  {
+    path: '/register',
+    element: <Register />
+  },
+  {
+    path: '/login',
+    element: <Login />
+  }
+]);
 
 // import { createBrowserRouter, Navigate } from "react-router-dom";
 // import Login from "./features/auth/pages/Login";

@@ -1,30 +1,29 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-
-const postSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema(
+  {
     caption: {
-        type: String,
-        default: ""
+      type: String,
+      default: "",
     },
     mediaUrl: {
-        type: String,
-        required: [true, "mediaUrl is required for creating an post"]
+      type: String,
+      required: [true, "mediaUrl is required for creating a post"],
     },
-     mediaType:{
-        type: String,
-        enum: ["image","video"],
-        required: true
+    mediaType: {
+      type: String,
+      enum: ["image", "video"],
+      required: true,
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: [true, "user id is required for creating an post"]
-    }
-}, { timestamps: true })
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User id is required for creating a post"],
+    },
+  },
+  { timestamps: true }
+);
 
+const postModel = mongoose.model("Post", postSchema);
 
-const postModel = mongoose.model("posts", postSchema)
-
-
-module.exports = postModel
-
+module.exports = postModel;

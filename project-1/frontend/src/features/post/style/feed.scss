@@ -2,8 +2,8 @@
     display: flex;
     justify-content: center;
     min-height: 100vh;
-    background-color: #000;
-    color: #fff;
+    background-color: var(--auth-bg);
+    color: var(--text-main);
     padding-top: 20px;
 
     .feed {
@@ -12,8 +12,8 @@
 
         .post {
             width: 100%;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #262626;
+            margin-bottom: 16px; // Increased spacing
+             border-bottom: 1px solid var(--input-border);
 
             .post-header {
                 display: flex;
@@ -27,64 +27,71 @@
                     gap: 12px;
 
                     .img-wrapper {
-                        width: 32px;
-                        height: 32px;
+                        width: 34px; // Slightly larger
+                        height: 34px;
                         border-radius: 50%;
-                        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+                        background: var(--story-gradient);
                         padding: 2px;
+                        cursor: pointer;
 
                         img {
                             width: 100%;
                             height: 100%;
                             border-radius: 50%;
-                            border: 2px solid #000;
+                            border: 2px solid var(--auth-bg);
                             object-fit: cover;
                         }
                     }
 
-                    .username {
+                        .username {
                         font-size: 14px;
                         font-weight: 600;
+                        cursor: pointer;
+                        &:hover { color: var(--icon-color); }
                     }
                 }
 
-                .more-btn {
-                    background: none;
+                // Transparent Delete Button
+                .delete-icon-btn {
+                    background: transparent; // Request: transparent bg
                     border: none;
-                    color: #fff;
                     cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 8px;
+                    border-radius: 50%;
+                    transition: background 0.2s ease;
+
+                    &:hover {
+                        background: rgba(255, 48, 64, 0.1); // Subtle red tint on hover
+                    }
+
+                    svg {
+                        transition: transform 0.2s ease;
+                    }
+
+                    &:active svg {
+                        transform: scale(0.9);
+                    }
                 }
             }
 
-            .media-container {
+                .media-container {
                 position: relative;
                 width: 100%;
-                background-color: #000;
+                 background: var(--card-bg);
                 display: flex;
                 align-items: center;
                 min-height: 300px;
+                border-radius: 8px; // Modern touch
+                border: 0.5px solid var(--input-border);
                 overflow: hidden;
 
                 .post-media {
                     width: 100%;
                     max-height: 585px;
                     object-fit: contain;
-                }
-
-                .heart-overlay {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    pointer-events: none;
-                    animation: heartPop 0.8s ease-out forwards;
-
-                    svg {
-                        width: 80px;
-                        height: 80px;
-                        color: rgba(255, 255, 255, 0.9);
-                        filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-                    }
                 }
             }
 
@@ -99,27 +106,40 @@
                     .left {
                         display: flex;
                         gap: 16px;
+                        align-items: center;
                     }
 
                     button {
-                        background: none;
+                        background: transparent;
                         border: none;
-                        color: #fff;
+                        color: var(--text-main);
                         cursor: pointer;
-                        padding: 0;
+                        padding: 4px;
+                        display: flex;
+                        align-items: center;
+                        border-radius: 50%;
+                        transition: opacity 0.2s;
+
+                        &:hover { opacity: 0.7; }
 
                         svg {
                             width: 24px;
                             height: 24px;
                             transition: transform 0.1s;
 
-                            &:active {
-                                transform: scale(1.2);
-                            }
+                            &:active { transform: scale(1.2); }
 
                             &.filled {
-                                fill: #ff3040;
-                                stroke: #ff3040;
+                                fill: var(--accent-like);
+                                stroke: var(--accent-like);
+                            }
+                        }
+
+                        // Specific style for share icon
+                        &.share-btn {
+                            svg {
+                                transform: rotate(-20deg); // Real Insta tilt
+                                margin-bottom: 2px;
                             }
                         }
                     }
@@ -128,46 +148,120 @@
                 .likes-count {
                     font-size: 14px;
                     font-weight: 600;
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
+                    padding-left: 4px;
                 }
 
                 .caption-section {
                     font-size: 14px;
-                    line-height: 1.4;
+                    line-height: 1.5;
+                    padding-left: 4px;
 
                     .username {
                         font-weight: 600;
-                        margin-right: 8px;
+                        margin-right: 6px;
                     }
                 }
-            }   
+            }
         }
     }
 }
 
+// Save button specific logic
+.save-btn {
+    svg.saved {
+        fill: var(--btn-text) !important;
+    }
+}
+
+.media-container {
+    position: relative; // Crucial for overlay positioning
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+     background: var(--auth-bg);
+
+    .heart-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        pointer-events: none; // Allows clicks to pass through
+        animation: heartPop 0.8s ease-out forwards;
+
+        svg {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.4));
+        }
+    }
+}
+.menu-wrapper {
+    position: relative;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-main);
+    padding: 6px;
+}
+
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 20;
+    min-width: 120px;
+    animation: fadeIn 0.2s ease;
+}
+
+.menu-dropdown button {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menu-dropdown button:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px);}
+    to { opacity: 1; transform: translateY(0);}
+}
 @keyframes heartPop {
     0% {
         transform: translate(-50%, -50%) scale(0);
         opacity: 0;
     }
-
     15% {
         transform: translate(-50%, -50%) scale(1.2);
-        opacity: 1;
+        opacity: 0.9;
     }
-
     30% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
-
     80% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
-
     100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
     }
 }

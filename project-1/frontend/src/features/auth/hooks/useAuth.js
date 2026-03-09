@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context";
-import { login,register } from "../services/auth.api";
-
+import { login,register,logout } from "../services/auth.api";
+import { useNavigate } from "react-router-dom";
 
 export const useAuth = ()=>{
+    const navigate = useNavigate();
     let context = useContext(AuthContext)
     let {user,setUser,loading,setLoading} = context
 
@@ -21,7 +22,17 @@ export const useAuth = ()=>{
         setUser(res.user)
         setLoading(false)
     }
+      const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      navigate("/login"); // ✅ redirect
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
     return{
-        user,loading,handlelogin,handleRegister
+        user,loading,handlelogin,handleRegister, handleLogout
     }
 }
