@@ -42,7 +42,7 @@ const Sidebar = () => {
       <aside className="sidebar">
         <div className="logo-section">
           <div className="logo-icon">
-            <Music size={26} strokeWidth={2.5} />
+            <Music size={26} strokeWidth={2.5} className="music" />
           </div>
           <span className="logo-text">EmotionTune</span>
         </div>
@@ -61,16 +61,6 @@ const Sidebar = () => {
           <NavLink to="/fav" className={navClass}>
             <Heart size={20} />
             <span>Favorites</span>
-          </NavLink>
-
-          <NavLink to="/mood" className={navClass}>
-            <History size={20} />
-            <span>Mood History</span>
-          </NavLink>
-
-          <NavLink to="/profile" className={navClass}>
-            <UserCircle size={20} />
-            <span>Profile</span>
           </NavLink>
         </nav>
 

@@ -51,8 +51,6 @@ const Home = () => {
   </div>
 
 </section>
-
-      {/* RECOMMENDATIONS */}
       <section className="card songs-section">
         <div className="card-title">
           <Music size={18} />

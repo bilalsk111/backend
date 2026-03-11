@@ -1,0 +1,78 @@
+.premium-card {
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  .thumbnail-box {
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.5s;
+    }
+
+    .interaction-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: 0.3s;
+      z-index: 5;
+
+      .play-btn-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: var(--link-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        transform: scale(0.9);
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    &:hover .interaction-overlay {
+      opacity: 1;
+    }
+
+    .heart-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+
+      &.liked {
+        background: var(--link-color);
+      }
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &.active {
+    border-color: var(--link-color);
+    box-shadow: 0 15px 40px rgba(0,149,246,0.2);
+  }
+}

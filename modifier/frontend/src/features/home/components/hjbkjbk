@@ -1,165 +1,149 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
-// import { SongContext } from "../../home/song.context";
-import {useSong} from "../../home/hooks/useSong"
-import {
-  SkipBack,
-  SkipForward,
-  Heart,
-  Volume2,
-  Repeat,
-  Shuffle,
-  Gauge,
-} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSong } from "../../home/hooks/useSong";
+import { Heart, Volume2, RotateCcw, RotateCw, Volume1 } from "lucide-react";
 import "../../home/style/Player.scss";
 
 const Player = () => {
   const { song } = useSong();
-  const audioRef = useRef(null);
+  const playerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(0.7);
-  const [speed, setSpeed] = useState(1);
+  const [progress, setProgress] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
-    if (!song) return null;
-
+  // Load YouTube API only once
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume;
-  }, [volume]);
+    if (window.YT) return; // Already loaded
 
-  const onTimeUpdate = () => {
-    const current = audioRef.current.currentTime;
-    const duration = audioRef.current.duration;
-    setProgress((current / duration) * 100 || 0);
-  };
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = () => setIsReady(true);
+  }, []);
+
+  // Initialize player when ready
+  useEffect(() => {
+    if (!isReady || !song) return;
+
+    // Destroy previous player if exists
+    if (playerRef.current?.destroy) playerRef.current.destroy();
+
+    playerRef.current = new window.YT.Player("yt-player", {
+      height: "0",
+      width: "0",
+      videoId: song.videoId,
+      playerVars: { autoplay: 0, controls: 0 },
+      events: {
+        onReady: (e) => e.target.setVolume(volume * 100),
+        onStateChange: (e) => {
+          if (e.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
+          if (
+            e.data === window.YT.PlayerState.PAUSED ||
+            e.data === window.YT.PlayerState.ENDED
+          )
+            setIsPlaying(false);
+        },
+      },
+    });
+
+    setProgress(0);
+    setIsPlaying(false);
+  }, [song, isReady]);
+
+  // Progress updater
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (playerRef.current?.getCurrentTime && playerRef.current?.getDuration) {
+        const current = playerRef.current.getCurrentTime();
+        const duration = playerRef.current.getDuration();
+        setProgress((current / duration) * 100 || 0);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   const togglePlay = () => {
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play();
-    setIsPlaying(!isPlaying);
+    if (!playerRef.current) return;
+    if (isPlaying) playerRef.current.pauseVideo();
+    else playerRef.current.playVideo();
   };
 
-  const handleSeek = (e) => {
+  const skipForward = () => {
+    if (!playerRef.current) return;
+    playerRef.current.seekTo(playerRef.current.getCurrentTime() + 5, true);
+  };
+
+  const skipBackward = () => {
+    if (!playerRef.current) return;
+    playerRef.current.seekTo(playerRef.current.getCurrentTime() - 5, true);
+  };
+
+  const seek = (e) => {
+    if (!playerRef.current) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const duration = audioRef.current.duration;
-    audioRef.current.currentTime = (clickX / width) * duration;
+    const percent = (e.clientX - rect.left) / rect.width;
+    const duration = playerRef.current.getDuration();
+    playerRef.current.seekTo(percent * duration, true);
   };
 
-  const formatTime = (seconds) => {
-    if (!seconds) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
-  };
+  if (!song) return null;
 
   return (
-    <div className="spotify-player">
-      <audio
-        ref={audioRef}
-        src={song.url}
-        onTimeUpdate={onTimeUpdate}
-        onEnded={() => setIsPlaying(false)}
-      />
+    <div className="player">
+      <div id="yt-player" />
 
       <div className="player-left">
-        <img src={song.posterUrl} alt="poster" className="now-playing-art" />
-        <div className="song-meta">
-          <p className="song-name">{song.title}</p>
-          <p className="song-mood">{song.mood}</p>
+        <img src={song.posterUrl || "/default-cover.png"} alt="cover" />
+        <div>
+          <p>{song.title}</p>
+          <p>{song.artist}</p>
+          <p>{song.mood}</p>
         </div>
-        <button className="icon-btn heart-btn">
-          <Heart size={18} />
-        </button>
+        <Heart size={20} />
       </div>
 
       <div className="player-center">
-        <div className="control-buttons">
-          <button className="icon-btn secondary-btn">
-            <Shuffle size={16} />
-          </button>
-          <button
-            className="icon-btn skip-btn"
-            onClick={() => (audioRef.current.currentTime -= 5)}
-          >
-            <SkipBack size={20} fill="currentColor" />
-          </button>
-
-          <button
-            className="play-btn"
-            onClick={togglePlay}
-            title={isPlaying ? "Pause" : "Play"}
-          >
-            {isPlaying ? (
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="5" width="4" height="14" rx="1" />
-                <rect x="14" y="5" width="4" height="14" rx="1" />
-              </svg>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                style={{ marginLeft: "2px" }}
-              >
-                <path d="M7 5v14l11-7z" />
-              </svg>
-            )}
-          </button>
-
-          <button
-            className="icon-btn skip-btn"
-            onClick={() => (audioRef.current.currentTime += 5)}
-          >
-            <SkipForward size={20} fill="currentColor" />
-          </button>
-          <button className="icon-btn secondary-btn">
-            <Repeat size={16} />
-          </button>
+        <div className="progress-wrapper">
+          <span>
+            {Math.floor(playerRef.current?.getCurrentTime?.() / 60) || 0}:
+            {("0" + Math.floor(playerRef.current?.getCurrentTime?.() % 60)).slice(-2)}
+          </span>
+          <div className="progress" onClick={seek}>
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <span>
+            {Math.floor(playerRef.current?.getDuration?.() / 60) || 0}:
+            {("0" + Math.floor(playerRef.current?.getDuration?.() % 60)).slice(-2)}
+          </span>
         </div>
 
-        <div className="playback-wrapper">
-          <span className="time">
-            {formatTime(audioRef.current?.currentTime)}
-          </span>
-          <div className="progress-container" onClick={handleSeek}>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }}>
-                <div className="progress-knob" />
-              </div>
-            </div>
-          </div>
-          <span className="time">{formatTime(audioRef.current?.duration)}</span>
+        <div className="controls">
+          <button onClick={skipBackward}>
+            <RotateCcw size={20} />
+          </button>
+          <button className="play" onClick={togglePlay}>
+            {isPlaying ? "❚❚" : "▶"}
+          </button>
+          <button onClick={skipForward}>
+            <RotateCw size={20} />
+          </button>
         </div>
       </div>
 
       <div className="player-right">
-        <div className="speed-selector">
-          <Gauge size={18} />
-          <select
-            value={speed}
-            onChange={(e) => {
-              const val = parseFloat(e.target.value);
-              setSpeed(val);
-              audioRef.current.playbackRate = val;
-            }}
-          >
-            <option value="0.5">0.5x</option>
-            <option value="1">1x</option>
-            <option value="2">2x</option>
-          </select>
-        </div>
-
-        <div className="volume-control">
-          <Volume2 size={18} />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
-          />
-        </div>
+        <Volume1 size={16} />
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={(e) => {
+            setVolume(parseFloat(e.target.value));
+            if (playerRef.current) playerRef.current.setVolume(parseFloat(e.target.value) * 100);
+          }}
+        />
       </div>
     </div>
   );

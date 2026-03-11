@@ -1,26 +1,22 @@
-/* SaaS Design Tokens Reference */
-$green: var(--link-color);
-$text: var(--text-main);
-$dim: var(--dim);
+/* SaaS Design Tokens Applied */
 
 .player {
-  background: rgba(10, 10, 15, 0.4);
-  backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card-bg);
+  backdrop-filter: var(--glass);
+  border: 1px solid var(--border);
   border-radius: 35px;
   padding: 25px;
   display: flex;
-  flex-direction: column; // Vertical layout as per screenshot
+  flex-direction: column;
   gap: 20px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
   width: 100%;
 
-  // Header "Now Playing" inside the card
   .player-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #fff;
+    color: var(--text-main);
     font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 5px;
@@ -33,7 +29,7 @@ $dim: var(--dim);
 
 .player-left {
   display: flex;
-  flex-direction: column; // Stack art and text
+  flex-direction: column;
   align-items: flex-start;
   gap: 15px;
 
@@ -47,7 +43,7 @@ $dim: var(--dim);
       height: 100%;
       border-radius: 20px;
       object-fit: cover;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     }
 
     .visualizer-overlay {
@@ -56,7 +52,7 @@ $dim: var(--dim);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.05);
       border-radius: 20px;
     }
   }
@@ -70,7 +66,7 @@ $dim: var(--dim);
     .info-text {
       .title {
         font-weight: 800;
-        color: #fff;
+        color: var(--text-main);
         font-size: 1.1rem;
         margin: 0;
         display: -webkit-box;
@@ -83,7 +79,7 @@ $dim: var(--dim);
         color: var(--dim);
         font-size: 0.6rem;
         margin-top: 4px;
-          display: -webkit-box;
+        display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
@@ -122,16 +118,16 @@ $dim: var(--dim);
     .progress {
       flex: 1;
       height: 4px;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--input-border);
       border-radius: 10px;
       cursor: pointer;
       position: relative;
 
       .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--link-color), #a855f7);
+        background: var(--link-color);
         border-radius: 10px;
-        box-shadow: 0 0 15px var(--link-color);
+        box-shadow: 0 0 10px rgba(0, 149, 246, 0.3);
       }
     }
   }
@@ -143,13 +139,12 @@ $dim: var(--dim);
     gap: 25px;
 
     svg {
-      color: #fff;
+      color: var(--icon-color);
       cursor: pointer;
       transition: 0.2s;
-      opacity: 0.8;
 
       &:hover {
-        opacity: 1;
+        color: var(--text-main);
         transform: translateY(-2px);
       }
     }
@@ -166,17 +161,17 @@ $dim: var(--dim);
     .play {
       width: 58px;
       height: 58px;
-      background: linear-gradient(135deg, var(--link-color), #a855f7) !important;
-      color: #fff !important;
+      background: var(--link-color) !important;
+      color: var(--btn-text) !important;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+      box-shadow: 0 10px 25px rgba(0, 149, 246, 0.3);
 
       &:hover {
         transform: scale(1.08);
-        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
+        box-shadow: 0 10px 30px rgba(0, 149, 246, 0.5);
       }
     }
   }

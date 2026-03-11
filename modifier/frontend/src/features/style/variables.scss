@@ -1,56 +1,88 @@
-/* SaaS Design Tokens - Light Mode */
 :root {
-   --side-bg: #222222;
-  --auth-bg: #fafafa;
-  --card-bg: #ffffff;
-  --text-main: #262626;
-  --input-bg: #fafafa;
-  --input-border: #dbdbdb;
-  --icon-color: #8e8e8e;
+  /* --- Primary Brand & Actions --- */
   --link-color: #0095f6;
-  --hover-bg: rgba(0,0,0,0.04);
-  --accent-like: #ff3040;
-  --focus-border: #a8a8a8;
-  --btn-text: #ffffff;
+  --accent: #03a768; // Success/Emerald
+  --accent-like: #ff3040; // Danger/Soft Red
   --story-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
   
-  /* Fallback SaaS tokens */
-  --bg: #fafafa;
+  /* --- Backgrounds & Surfaces (Light) --- */
+  --bg: #f8f9fa; 
+  --side-bg: #ffffff;
+  --auth-bg: #ffffff;
+  --card-bg: #ffffff;
+  --input-bg: #f1f3f5;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  
+  /* --- Typography & Icons (Light) --- */
+  --text: #1a1d23;
+  --text-main: #212529;
+  --dim: #6c757d;
+  --icon-color: #868e96;
+  --logo: #1a1d23;
+  --btn-text: #ffffff;
+  
+  /* --- Borders & Glass (Light) --- */
   --border: rgba(0, 0, 0, 0.08);
-  --text: #262626;
-  --dim: #8e8e8e;
-  --accent: #00ff9d;
-  --glass: blur(12px) saturate(150%);
+  --input-border: #dee2e6;
+  --focus-border: #adb5bd;
+  --glass: blur(12px) saturate(180%) rgba(255, 255, 255, 0.7);
+  
+  /* --- Buttons --- */
+  --btn: #1a1d23;
 }
 
-/* Dark Mode */
+/* Dark Mode Overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --side-bg: #222222;
-    --auth-bg: #000;
-    --card-bg: #121212;
-    --text-main: #fff;
-    --input-bg: #1a1a1a;
-    --input-border: #262626;
-    --icon-color: #8e8e8e;
-    --link-color: #0095f6;
-    --hover-bg: rgba(255,255,255,0.08);
-    --accent-like: #ff3040;
-    --focus-border: #5a5a5a;
-    --btn-text: #ffffff;
-    --story-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    /* --- Primary Brand (Maintained or Brightened) --- */
+    --link-color: #33a9ff;
+    --accent: #00ff9d; // Neon Emerald for Dark
+    --accent-like: #ff4d5a;
     
-    /* Fallback SaaS tokens */
-    --bg: #050505;
-    --card-bg: rgba(18, 18, 18, 0.7);
-    --border: rgba(255, 255, 255, 0.08);
-    --text: #ffffff;
-    --dim: #b3b3b3;
-    --accent: #00ff9d;
-    --glass: blur(12px) saturate(150%);
+    /* --- Backgrounds & Surfaces (Dark) --- */
+    --bg: #0b0c0d; 
+    --side-bg: #16181a;
+    --auth-bg: #000000;
+    --card-bg: #1c1f22;
+    --input-bg: #25282c;
+    --hover-bg: rgba(255, 255, 255, 0.06);
+    
+    /* --- Typography & Icons (Dark) --- */
+    --text: #f8f9fa;
+    --text-main: #ffffff;
+    --dim: #adb5bd;
+    --icon-color: #adb5bd;
+    --logo: #ffffff;
+    --btn-text: #000000;
+    
+    /* --- Borders & Glass (Dark) --- */
+    --border: rgba(255, 255, 255, 0.1);
+    --input-border: #343a40;
+    --focus-border: #495057;
+    --glass: blur(12px) saturate(180%) rgba(11, 12, 13, 0.7);
+    
+    /* --- Buttons --- */
+    --btn: #ffffff;
   }
 }
 
+/* --- Mood-based Theming (Refined for Contrast) --- */
+body.mood-happy { 
+  --accent: #ffd43b; 
+  background: radial-gradient(circle at top, rgba(255, 212, 59, 0.15), var(--bg)); 
+}
+body.mood-neutral { 
+  --accent: #00ff9d; 
+  background: radial-gradient(circle at top, rgba(0, 255, 157, 0.1), var(--bg)); 
+}
+body.mood-sad { 
+  --accent: #4dabf7; 
+  background: radial-gradient(circle at top, rgba(77, 171, 247, 0.15), var(--bg)); 
+}
+body.mood-angry { 
+  --accent: #ff6b6b; 
+  background: radial-gradient(circle at top, rgba(255, 107, 107, 0.15), var(--bg)); 
+}
 /* Mood-based Theming */
 body.mood-happy { 
   --accent: #ffd93d; 
