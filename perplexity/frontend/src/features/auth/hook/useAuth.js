@@ -2,44 +2,58 @@ import { useDispatch } from "react-redux";
 import { register, login, getMe } from "../services/auth.api";
 import { setUser, setLoading, setError } from "../auth.slice";
 
-
 export function useAuth() {
-
-
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     async function handleRegister({ email, username, password }) {
         try {
-            dispatch(setLoading(true))
-            const data = await register({ email, username, password })
+            dispatch(setLoading(true));
+            dispatch(setError(null));
+
+            await register({ email, username, password });
+            
+            return { success: true }; 
         } catch (error) {
-            dispatch(setError(error.response?.data?.message || "Registration failed"))
+            const errorMessage = 
+                error.response?.data?.errors?.[0]?.msg || 
+                error.response?.data?.message ||          
+                "Registration failed. Please try again.";
+            
+            dispatch(setError(errorMessage));
+            return { success: false, errorMsg: errorMessage }; 
         } finally {
-            dispatch(setLoading(false))
+            dispatch(setLoading(false));
         }
     }
 
     async function handleLogin({ email, password }) {
         try {
-            dispatch(setLoading(true))
-            const data = await login({ email, password })
-            dispatch(setUser(data.user))
+            dispatch(setLoading(true));
+            dispatch(setError(null));
+
+            const data = await login({ email, password });
+            dispatch(setUser(data.user));
+
+            return { success: true }; 
         } catch (err) {
-            dispatch(setError(err.response?.data?.message || "Login failed"))
+            const errorMessage = err.response?.data?.message || "Invalid email or password";
+            dispatch(setError(errorMessage));
+
+            return { success: false, errorMsg: errorMessage }; 
         } finally {
-            dispatch(setLoading(false))
+            dispatch(setLoading(false));
         }
     }
 
     async function handleGetMe() {
         try {
-            dispatch(setLoading(true))
-            const data = await getMe()
-            dispatch(setUser(data.user))
+            dispatch(setLoading(true));
+            const data = await getMe();
+            dispatch(setUser(data.user));
         } catch (err) {
-            dispatch(setError(err.response?.data?.message || "Failed to fetch user data"))
+            dispatch(setUser(null));
         } finally {
-            dispatch(setLoading(false))
+            dispatch(setLoading(false));
         }
     }
 
@@ -48,5 +62,4 @@ export function useAuth() {
         handleLogin,
         handleGetMe,
     }
-
 }

@@ -1,19 +1,22 @@
-import axios from "axios";
+import axios from 'axios'
+
 
 const api = axios.create({
-    baseURL:"http://localhost:3000/api",
-    withCredentials:true
+    baseURL: "http://localhost:3000",
+    withCredentials: true,
 })
 
-export async function register({email,username,password}) {
-    const res = await api.post("/auth/register",{email,username,password})
-    return res.data
+export async function register({ email, username, password }) {
+    const response = await api.post("/api/auth/register", { email, username, password })
+    return response.data
 }
-export async function login({email,password}) {
-    const res = await api.post("/auth/login",{email,password})
-    return res.data
+
+export async function login({ email, password }) {
+    const response = await api.post("/api/auth/login", { email, password })
+    return response.data
 }
+
 export async function getMe() {
-    const res = await api.get("/auth/getme")
-    return res.data
+    const response = await api.get("/api/auth/getme")
+    return response.data
 }

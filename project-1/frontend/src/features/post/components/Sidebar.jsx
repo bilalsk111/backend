@@ -34,8 +34,8 @@ const Sidebar = () => {
             <Search size={24} /> <span>Search</span>
           </NavLink>
 
-          <NavLink to="/explore">
-            <Compass size={24} /> <span>Explore</span>
+          <NavLink to="/reels">
+            <Compass size={24} /> <span>Reels</span>
           </NavLink>
 
           <NavLink to="/save">

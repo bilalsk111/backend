@@ -8,7 +8,7 @@ const api = axios.create({
 // GET FEED
 export const GetFeed = async () => {
   const res = await api.get("/posts/feed");
-  return res.data; // { posts: [...] }
+  return res.data; 
 };
 
 // LIKE
@@ -24,7 +24,11 @@ export const createPost = async (formData) => {
   });
   return res.data;
 };
-
+//REELS
+export const getReels = async () => {
+  const res = await api.get("/posts/reels");
+  return res.data;
+};
 // DELETE
 export const deletePost = async (id) => {
   const res = await api.delete(`/posts/${id}`);

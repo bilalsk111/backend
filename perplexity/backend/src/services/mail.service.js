@@ -12,22 +12,25 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-
-// Verification logic
 transporter.verify()
-    .then(() => { console.log("Email transporter is ready to send emails"); })
-    .catch((err) => { console.error("Email transporter verification failed:", err); });
+    .then(() => { console.log("Email transporter is ready"); })
+    .catch((err) => { console.error("Email verification failed:", err); });
 
-export async function sendEmail(to, subject, html, text) {
-    const mailoptions = {
-        from: process.env.EMAIL_USER,
-        to: to,  
-        subject: subject,
-        html: html,
-        text: text
-    };
-    
-    // Correct method is sendMail
-    const details = await transporter.sendMail(mailoptions); 
-    console.log("Email sent:", details);
+export async function sendEmail({ to, subject, html, text }) {
+    try {
+        const mailoptions = {
+            from: process.env.EMAIL_USER,
+            to: to,  
+            subject: subject,
+            html: html,
+            text: text
+        };
+
+        const details = await transporter.sendMail(mailoptions); 
+        console.log("Email sent successfully:", details.messageId);
+        return true;
+    } catch (error) {
+        console.error("Failed to send email:", error);
+        return false;
+    }
 }

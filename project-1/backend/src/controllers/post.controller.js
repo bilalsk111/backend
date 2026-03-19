@@ -345,6 +345,20 @@ async function getComments(req, res) {
   }
 }
 
+async function getReels(req,res){
+  try{
+    const reels = await postModel.find({
+      mediaType:"video"
+    }).populate("user","username profileImage")
+     .sort({ createdAt: -1 });
+    res.status(201).json({reels})
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+}
+
 
 module.exports = {
     createPost,
@@ -356,5 +370,6 @@ module.exports = {
     toggleSavePost,
     getSavedPosts,
       getComments,
-    createComment
+    createComment,
+    getReels
 }

@@ -1,22 +1,17 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router'
-import { Loader2 } from 'lucide-react'
+import { Navigate } from 'react-router-dom'
 
 const Protected = ({ children }) => {
     const user = useSelector(state => state.auth.user)
-    const loading = useSelector(state => state.auth.loading)
-     if (loading) {
-        return (
-            <div className="h-screen w-full flex items-center justify-center bg-[#050505]">
-                <Loader2 className="animate-spin text-[#31b8c6]" size={40} />
-            </div>
-        )
-    }
+    
+    // Agar sach mein user null hai, tabhi login par bhejo
     if (!user) {
+        // console.log("Protected Route ne dhakka mara!"); // Agar aapko check karna ho
         return <Navigate to="/login" replace />
     }
 
+    // Agar user hai toh usko Dashboard dikhao
     return children
 }
 

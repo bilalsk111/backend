@@ -20,7 +20,6 @@ const Post = ({ user, post, currentUser }) => {
     post?.user?._id &&
     String(currentUser._id) === String(post.user._id);
 
-  // ❤️ DOUBLE TAP LIKE
   const handleDoubleTap = () => {
     if (!post?.isLiked) handleToggleLike(post?._id);
     setShowHeart(true);
@@ -33,7 +32,6 @@ const Post = ({ user, post, currentUser }) => {
     setDeleteOpen(false);
   };
 
-  // ❌ CLOSE MENU OUTSIDE CLICK
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -49,7 +47,6 @@ const Post = ({ user, post, currentUser }) => {
   return (
     <>
       <div className="post">
-        {/* HEADER */}
         <div className="post-header">
           <div className="user">
             <div className="img-wrapper">

@@ -16,26 +16,41 @@ async function followUser(req, res) {
     const { username } = req.params;
 
     const targetUser = await userModel.findOne({ username });
-    if (!targetUser)
+    if (!targetUser) {
       return res.status(404).json({ message: "User not found" });
+    }
 
-    if (targetUser._id.toString() === followerId)
+    // prevent self follow
+    if (targetUser._id.toString() === followerId) {
       return res.status(400).json({ message: "You cannot follow yourself" });
+    }
 
     const existing = await Follow.findOne({
       follower: followerId,
       followee: targetUser._id,
     });
 
-    if (existing)
-      return res.status(409).json({ message: "Already following this user" });
+    if (existing) {
+      return res.status(409).json({
+        message: "Already following this user",
+        isFollowing: true
+      });
+    }
 
     await Follow.create({
       follower: followerId,
       followee: targetUser._id,
     });
 
-    return res.status(201).json({ message: "Followed successfully" });
+    const followersCount = await Follow.countDocuments({
+      followee: targetUser._id
+    });
+
+    return res.status(201).json({
+      message: "Followed successfully",
+      isFollowing: true,
+      followersCount
+    });
 
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -48,19 +63,32 @@ async function unfollowUser(req, res) {
     const followerId = req.user.id;
     const { username } = req.params;
 
-    const targetUser = await User.findOne({ username });
-    if (!targetUser)
+    const targetUser = await userModel.findOne({ username });
+    if (!targetUser) {
       return res.status(404).json({ message: "User not found" });
+    }
 
     const deleted = await Follow.findOneAndDelete({
       follower: followerId,
       followee: targetUser._id,
     });
 
-    if (!deleted)
-      return res.status(404).json({ message: "Not following this user" });
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Not following this user",
+        isFollowing: false
+      });
+    }
 
-    return res.status(200).json({ message: "Unfollowed successfully" });
+    const followersCount = await Follow.countDocuments({
+      followee: targetUser._id
+    });
+
+    return res.status(200).json({
+      message: "Unfollowed successfully",
+      isFollowing: false,
+      followersCount
+    });
 
   } catch (error) {
     return res.status(500).json({ message: error.message });

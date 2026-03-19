@@ -14,7 +14,6 @@ export function authUser(req, res, next) {
             err: "No token provided"
         })
     }
-
     try {
 
        const decoded = jwt.verify(token, process.env.JWT_TOKEN);

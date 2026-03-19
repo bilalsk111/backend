@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getProfile } from "../services/user.api";
+
+const profileCache = {};
 
 export const useProfile = (username) => {
   const [profileState, setProfileState] = useState({
@@ -11,24 +13,41 @@ export const useProfile = (username) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const fetching = useRef(false);
 
   useEffect(() => {
+    if (!username) return;
+    if (profileCache[username]) {
+      setProfileState(profileCache[username]);
+      setLoading(false);
+      return;
+    }
+
+    if (fetching.current) return;
+
     const fetchProfile = async () => {
       try {
+        fetching.current = true;
         setLoading(true);
+
         const data = await getProfile(username);
 
-        setProfileState({
+        const profileData = {
           profileUser: data.user,
-          posts: data.posts,
-          followersCount: data.followersCount,
-          followingCount: data.followingCount,
-          isFollowing: data.isFollowing,
-        });
+          posts: data.posts || [],
+          followersCount: data.followersCount || 0,
+          followingCount: data.followingCount || 0,
+          isFollowing: data.isFollowing || false,
+        };
+
+        profileCache[username] = profileData;
+
+        setProfileState(profileData);
       } catch (err) {
-        console.error(err);
+        console.error("Profile fetch error:", err);
       } finally {
         setLoading(false);
+        fetching.current = false;
       }
     };
 
@@ -37,7 +56,7 @@ export const useProfile = (username) => {
 
   return {
     ...profileState,
-    setProfileState, 
+    setProfileState,
     loading,
   };
 };

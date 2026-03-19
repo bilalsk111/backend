@@ -7,13 +7,14 @@ import Saved from './features/post/pages/Saved'
 import Profile from './features/user/pages/Profile'
 import MainLayout from './features/post/MainLayout'
 import Protected from './features/components/Protected'
+import Reels from './features/post/pages/Reels'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Protected>
       <MainLayout />
-    </Protected>, // Parent layout yahan aayega
+    </Protected>,
     children: [
       {
         path: 'feed',
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: 'create',
         element: <CreatePost />
+      },
+      {
+        path: 'reels',
+        element: <Reels />
       },
       {
         path: 'save',

@@ -38,7 +38,7 @@
 
   .create-card {
   background: var(--card-bg);
-    width: 420px; // Starting width (Square upload)
+    width: 420px;
     height: 460px;
     border-radius: 12px;
     overflow: hidden;
@@ -48,7 +48,7 @@
     transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     &.expanded {
-      width: 780px; // Instagram Desktop split-view width
+      width: 780px;
       height: 520px;
     }
 
@@ -56,10 +56,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px;
+      padding: 0 20px;
         border-bottom: 1px solid var(--input-border);
         height: 42px;
         background: transparent;
+        position: relative;
       
       .header-left, .header-right {
         width: 48px;
@@ -78,10 +79,12 @@
         border: none;
         color: var(--link-color);
         cursor: pointer;
-        padding: 0;
       }
 
       .share-btn {
+        position: absolute;
+        right: 3%;
+        top: -15%;
         color: var(--link-color);
         font-weight: 600;
         &:hover { color: var(--text-main); }

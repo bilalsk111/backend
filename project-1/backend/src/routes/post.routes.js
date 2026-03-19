@@ -2,7 +2,7 @@ let express = require('express')
 let postRouter = express.Router();
 let authmiddleware = require('../middlewares/auth.middleware')
 let multer = require('multer');
-let { createPost, GetFeed, detailsPosts, toggleLike, getPostLikes, deletePost, toggleSavePost, getSavedPosts,createComment,getComments
+let { createPost, GetFeed, detailsPosts,getReels, toggleLike, getPostLikes, deletePost, toggleSavePost, getSavedPosts,createComment,getComments
 
  } = require('../controllers/post.controller');
 let storage = multer.memoryStorage();
@@ -18,4 +18,5 @@ postRouter.post("/:id/save", authmiddleware, toggleSavePost);
 postRouter.delete("/:id", authmiddleware, deletePost);
 postRouter.post("/:postId/comment", authmiddleware, createComment);
 postRouter.get("/:postId/comments", authmiddleware, getComments);
+postRouter.get('/reels',getReels)
 module.exports = postRouter

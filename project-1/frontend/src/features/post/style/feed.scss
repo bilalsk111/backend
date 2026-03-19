@@ -46,6 +46,8 @@
                         .username {
                         font-size: 14px;
                         font-weight: 600;
+                        color: var(--text-main);
+                        text-decoration: none;
                         cursor: pointer;
                         &:hover { color: var(--icon-color); }
                     }
