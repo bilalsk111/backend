@@ -1,16 +1,17 @@
-import { Router } from "express"
-import { getChats, getMessages, sendmessage,delChat, deleteMessage,createChat } from "../controllers/chat.controller.js"
-import { authUser } from "../middleware/auth.middleware.js"
-const chatrouter = Router()
+import express from "express";
+import { sendmessage, getChats, getMessages, delChat, createChat, deleteMessage } from "../controllers/chat.controller.js";
+import { authUser } from "../middleware/auth.middleware.js";
+import { upload } from "../middleware/multer.middleware.js"; 
 
+const router = express.Router();
 
-chatrouter.post("/message",authUser,sendmessage)
-chatrouter.post("/new", authUser, createChat);
-chatrouter.get('/chat',authUser,getChats)
-chatrouter.get('/:chatId/messages',authUser,getMessages)
-chatrouter.delete('/delete:chatId',authUser,delChat)
-chatrouter.delete("/message/:messageId",authUser, deleteMessage);
+router.post("/message", authUser, upload.single("file"), sendmessage);
 
+// Baaki routes waise hi rahenge
+router.post("/new", authUser, createChat);
+router.get("/chat", authUser, getChats);
+router.get("/:chatId/messages", authUser, getMessages);
+router.delete("/delete/:chatId", authUser, delChat);
+router.delete("/message/:messageId", authUser, deleteMessage);
 
-
-export default chatrouter
+export default router;

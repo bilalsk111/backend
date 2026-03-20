@@ -1,186 +1,169 @@
-import {
-  MessageSquare,
-  Plus,
-  LogOut,
-  PanelLeftClose,
-  Share2,
-  Sparkles,
-  MoreVertical,
-  Pin,
-  Trash2,
-  Edit3,
-  ExternalLink,
-} from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../../auth/hook/useAuth";
+import { Plus, MessageSquare, Trash2, ChevronLeft, Bot, Search } from "lucide-react";
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const Sidebar = ({ isOpen, setIsOpen, chats, onSelectChat, onNewChat }) => {
-  const { user } = useAuth();
-  const [activeMenu, setActiveMenu] = useState(null);
-  const menuRef = useRef(null);
-  const openChat = (chatId) => {
-    if (!chatId) return;
-    onSelectChat(chatId);
+const Sidebar = ({ isOpen, setIsOpen, chats, onSelectChat, currentChatId, onNewChat, onDeleteChat }) => {
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const chatList = useMemo(() => {
+    const arr = Object.values(chats).sort(
+      (a, b) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)
+    );
+    if (!searchQuery.trim()) return arr;
+    return arr.filter((c) =>
+      c.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [chats, searchQuery]);
+
+  // Group by Today, Yesterday, Older
+  const grouped = useMemo(() => {
+    const now = new Date();
+    const today = now.toDateString();
+    const yesterday = new Date(now - 86400000).toDateString();
+    const groups = { Today: [], Yesterday: [], "Previous 7 Days": [], Older: [] };
+
+    chatList.forEach((chat) => {
+      const d = new Date(chat.lastUpdated || 0);
+      const ds = d.toDateString();
+      const diff = (now - d) / 86400000;
+      if (ds === today) groups.Today.push(chat);
+      else if (ds === yesterday) groups.Yesterday.push(chat);
+      else if (diff <= 7) groups["Previous 7 Days"].push(chat);
+      else groups.Older.push(chat);
+    });
+
+    return groups;
+  }, [chatList]);
+
+  const handleDelete = async (e, chatId) => {
+    e.stopPropagation();
+    if (deleteConfirm === chatId) {
+      await onDeleteChat(chatId);
+      setDeleteConfirm(null);
+    } else {
+      setDeleteConfirm(chatId);
+      setTimeout(() => setDeleteConfirm(null), 2500);
+    }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setActiveMenu(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      <aside
-        className={`
-        fixed md:relative z-50 h-full w-[280px] bg-[#171717] p-4 flex flex-col transition-all duration-300 border-r border-white/5
-        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-      `}
+      {/* Sidebar */}
+      <motion.aside
+        initial={false}
+        animate={{ x: isOpen ? 0 : -280 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed md:relative md:translate-x-0 z-50 md:z-auto h-full w-[280px] flex-shrink-0 flex flex-col bg-[#111111] border-r border-white/[0.06]"
+        style={{ transform: undefined }}
       >
-        <div className="flex items-center gap-3 px-2 mb-8 mt-2">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-1.5 rounded-lg">
-            <Sparkles size={18} className="text-white fill-white/20" />
+        {/* Logo */}
+        <div className="p-4 flex items-center justify-between border-b border-white/[0.06]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+              <Bot size={15} className="text-white" />
+            </div>
+            <span className="font-semibold text-white tracking-tight">Cognivex</span>
           </div>
-          <h2 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            Cognivex
-          </h2>
-        </div>
-
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={() => onNewChat()}
-            className="flex-1 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-200 transition-all py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-white/5"
-          >
-            <Plus size={18} strokeWidth={3} />
-            New Chat
-          </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="md:hidden ml-2 p-2 hover:bg-[#2f2f2f] rounded-lg text-gray-400"
+            className="md:hidden p-1.5 rounded-lg hover:bg-white/5 text-gray-500 hover:text-white transition-colors"
           >
-            <PanelLeftClose size={20} />
+            <ChevronLeft size={18} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-1 pr-2 -mr-2 custom-scrollbar">
-          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.1em] px-3 mb-3">
-            Recent Chats
-          </p>
-
-          {Object.values(chats).map((chat, i) => (
-            <div key={chat.id} className="relative group px-1">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // 🔥 FIX
-                  openChat(chat.id);
-                }}
-                className={`
-      w-full flex items-center justify-between px-3 py-3 text-sm rounded-xl transition-all cursor-pointer
-      ${activeMenu === i ? "bg-[#2f2f2f] text-white" : "text-gray-400 hover:text-gray-100 hover:bg-[#2f2f2f]/40"}
-    `}
-              >
-                <div className="flex items-center gap-3 truncate">
-                  <MessageSquare
-                    size={16}
-                    className={
-                      activeMenu === i ? "text-indigo-400" : "opacity-40"
-                    }
-                  />
-                  <span className="truncate">{chat.title}</span>
-                </div>
-                <MoreVertical
-                  size={14}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveMenu(i);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 hover:text-white cursor-pointer"
-                />
-              </button>
-              {activeMenu === i && (
-                <div
-                  ref={menuRef}
-                  className="absolute right-0 mt-1 w-44 bg-[#212121] border border-white/10 rounded-xl shadow-2xl z-[60] py-1.5 animate-in fade-in zoom-in duration-150"
-                >
-                  <MenuOption icon={<Pin size={14} />} label="Pin Chat" />
-                  <MenuOption icon={<Edit3 size={14} />} label="Rename" />
-                  <MenuOption
-                    icon={<ExternalLink size={14} />}
-                    label="Share Chat"
-                  />
-                  <div className="h-[1px] bg-white/5 my-1" />
-                  <MenuOption
-                    icon={<Trash2 size={14} />}
-                    label="Delete"
-                    variant="danger"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+        {/* New Chat */}
+        <div className="p-3">
+          <button
+            onClick={onNewChat}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-sm font-medium text-gray-300 hover:text-white transition-all group"
+          >
+            <Plus size={16} className="text-violet-400 group-hover:rotate-90 transition-transform duration-200" />
+            New conversation
+          </button>
         </div>
 
-        <div className="border-t border-white/10 pt-4 mt-2 space-y-3">
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors group">
-            <LogOut
-              size={18}
-              className="group-hover:translate-x-0.5 transition-transform"
-            />
-            Logout
-          </button>
-
-          <div className="flex items-center justify-between p-2.5 bg-[#212121]/50 rounded-2xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <img
-                  src="https://ui-avatars.com/api/?name=Bilal+Shaikh&background=6366f1&color=fff"
-                  alt="Profile"
-                  className="w-9 h-9 rounded-full"
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-[#171717] rounded-full"></div>
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-sm font-semibold text-gray-200">
-                  {user?.username}
-                </span>
-                <span className="text-[10px] text-indigo-400 font-bold tracking-wide uppercase">
-                  Pro Account
-                </span>
-              </div>
-            </div>
-            <Share2
-              size={16}
-              className="text-gray-500 hover:text-white transition-colors"
+        {/* Search */}
+        <div className="px-3 pb-2">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+            <Search size={13} className="text-gray-500 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search chats..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent text-xs text-gray-300 placeholder:text-gray-600 outline-none"
             />
           </div>
         </div>
-      </aside>
+
+        {/* Chat list */}
+        <div className="flex-1 overflow-y-auto py-1 space-y-0.5 px-2 custom-scrollbar">
+          {chatList.length === 0 && (
+            <div className="text-center py-10 text-gray-600 text-xs">
+              {searchQuery ? "No results found" : "No chats yet"}
+            </div>
+          )}
+
+          {Object.entries(grouped).map(([group, items]) => {
+            if (!items.length) return null;
+            return (
+              <div key={group} className="mb-3">
+                <p className="px-2 py-1.5 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
+                  {group}
+                </p>
+                {items.map((chat) => (
+                  <button
+                    key={chat.id}
+                    onClick={() => { onSelectChat(chat.id); setIsOpen(false); }}
+                    className={`w-full group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-all text-sm ${
+                      currentChatId === chat.id
+                        ? "bg-white/[0.1] text-white"
+                        : "text-gray-400 hover:bg-white/[0.05] hover:text-gray-200"
+                    }`}
+                  >
+                    <MessageSquare size={13} className="flex-shrink-0 opacity-60" />
+                    <span className="flex-1 truncate text-[13px]">
+                      {chat.title || "New Chat"}
+                    </span>
+                    <button
+                      onClick={(e) => handleDelete(e, chat.id)}
+                      className={`flex-shrink-0 p-1 rounded-md transition-all ${
+                        deleteConfirm === chat.id
+                          ? "opacity-100 text-red-400 bg-red-500/10"
+                          : "opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 hover:bg-red-500/10"
+                      }`}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </button>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
+        <div className="p-3 border-t border-white/[0.06]">
+          <p className="text-[10px] text-gray-600 text-center">Powered by Gemini & Mistral</p>
+        </div>
+      </motion.aside>
     </>
   );
 };
-
-// Helper Component for Dropdown Options
-const MenuOption = ({ icon, label, variant = "default" }) => (
-  <button
-    className={`
-    w-full flex items-center gap-3 px-3 py-2 text-xs transition-colors
-    ${variant === "danger" ? "text-red-400 hover:bg-red-500/10" : "text-gray-300 hover:bg-white/5"}
-  `}
-  >
-    {icon}
-    {label}
-  </button>
-);
 
 export default Sidebar;
